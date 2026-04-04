@@ -62,13 +62,19 @@ model Content {
 }
 
 model Payment {
-  id         String   @id @default(cuid())
-  userId     String
-  amount     Int
-  status     PaymentStatus
-  razorpayId String?
-  purpose    String   // "membership" or "event"
-  createdAt  DateTime @default(now())
+  id              String        @id @default(cuid())
+  userId          String
+  amount          Int
+  status          PaymentStatus @default(PENDING)
+  razorpayOrderId String?       @unique
+  razorpayPaymentId String?     @unique
+  razorpaySignature String?
+  purpose         String        // "membership" or "event"
+  membershipType  String?       // "individual" or "family"
+  eventId         String?       // Reference to event if purpose is "event"
+  metadata        String?       // JSON for additional data
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   user User @relation(fields: [userId], references: [id])
 }
