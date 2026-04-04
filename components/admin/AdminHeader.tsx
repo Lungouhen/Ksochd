@@ -1,7 +1,8 @@
 'use client';
 
-import { Bell, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 export function AdminHeader() {
   const pathname = usePathname();
@@ -24,10 +25,7 @@ export function AdminHeader() {
             placeholder="Search admin"
           />
         </div>
-        <button className="relative flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white hover:border-amber-300/60 hover:text-amber-100">
-          <Bell className="h-4 w-4" />
-          <span className="absolute -top-1 -right-1 h-2.5 w-2.5 rounded-full bg-amber-400" />
-        </button>
+        <NotificationBell />
       </div>
     </header>
   );

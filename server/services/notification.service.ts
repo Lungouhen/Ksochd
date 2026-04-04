@@ -55,3 +55,96 @@ export async function getNotifications(
     () => fallbackNotifications,
   );
 }
+
+export async function getUnreadCount(userId: string): Promise<number> {
+  return withPrisma(
+    async (client) => {
+      return await client.notification.count({
+        where: { userId, read: false },
+      });
+    },
+    () => 0,
+  );
+}
+
+export async function createNotification(
+  userId: string,
+  message: string,
+): Promise<boolean> {
+  return withPrisma(
+    async (client) => {
+      await client.notification.create({
+        data: {
+          userId,
+          message,
+          read: false,
+        },
+      });
+      return true;
+    },
+    () => false,
+  );
+}
+
+export async function createBulkNotifications(
+  userIds: string[],
+  message: string,
+): Promise<number> {
+  return withPrisma(
+    async (client) => {
+      const result = await client.notification.createMany({
+        data: userIds.map((userId) => ({
+          userId,
+          message,
+          read: false,
+        })),
+      });
+      return result.count;
+    },
+    () => 0,
+  );
+}
+
+export async function markAsRead(
+  notificationId: string,
+  userId: string,
+): Promise<boolean> {
+  return withPrisma(
+    async (client) => {
+      await client.notification.updateMany({
+        where: { id: notificationId, userId },
+        data: { read: true },
+      });
+      return true;
+    },
+    () => false,
+  );
+}
+
+export async function markAllAsRead(userId: string): Promise<boolean> {
+  return withPrisma(
+    async (client) => {
+      await client.notification.updateMany({
+        where: { userId, read: false },
+        data: { read: true },
+      });
+      return true;
+    },
+    () => false,
+  );
+}
+
+export async function deleteNotification(
+  notificationId: string,
+  userId: string,
+): Promise<boolean> {
+  return withPrisma(
+    async (client) => {
+      await client.notification.deleteMany({
+        where: { id: notificationId, userId },
+      });
+      return true;
+    },
+    () => false,
+  );
+}

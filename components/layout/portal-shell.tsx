@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ReactNode } from "react";
 import { Pill } from "../ui/pill";
+import { Toaster } from "sonner";
 
 export type NavItem = {
   label: string;
@@ -63,6 +64,7 @@ export function PortalShell({
 
         <main className="glass-panel border-white/10 p-6">{children}</main>
       </div>
+      <Toaster richColors theme="dark" />
     </div>
   );
 }

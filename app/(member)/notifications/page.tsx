@@ -1,6 +1,7 @@
 import { Pill } from "@/components/ui/pill";
 import { getNotifications } from "@/server/services/notification.service";
 import { getCurrentUser } from "@/server/services/user.service";
+import { NotificationList } from "@/components/notifications/NotificationList";
 
 export default async function MemberNotifications() {
   const user = await getCurrentUser();
@@ -15,32 +16,7 @@ export default async function MemberNotifications() {
         </p>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2">
-        {notifications.map((note) => (
-          <div
-            key={note.id}
-            className="rounded-xl border border-white/10 bg-white/5 p-4"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wide text-slate-300">
-                {note.visibility.toLowerCase()}
-              </span>
-              <span className="text-xs text-slate-200/70">{note.createdAt}</span>
-            </div>
-            <p className="mt-2 text-sm text-white">{note.message}</p>
-            <div className="mt-3 flex items-center gap-2">
-              <span
-                className={`h-2 w-2 rounded-full ${
-                  note.read ? "bg-emerald-300" : "bg-amber-300"
-                }`}
-              />
-              <span className="text-xs text-slate-200/70">
-                {note.read ? "Read" : "Unread"}
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
+      <NotificationList initialNotifications={notifications} />
     </div>
   );
 }
