@@ -11,17 +11,17 @@ export default function SystemSettings() {
     cookiesPolicy: "Active",
     dashboardLink: "Active",
     headerSearch: "Not Active",
+    cacheTTL: 30,
+    debugLogs: false,
   });
 
   const handleChange = (
     field: keyof typeof settings,
-    value: string | number,
+    value: string | number | boolean,
   ) => setSettings((prev) => ({ ...prev, [field]: value }));
 
   const handleSave = () =>
-    alert(
-      "✅ Settings saved successfully! (Connected to Supabase in next step)",
-    );
+    alert("✅ Settings saved successfully! (Connected to Supabase next)");
 
   const inputClass =
     "w-full rounded-lg border border-white/10 bg-slate-900/60 px-3 py-2 text-sm text-white focus:border-amber-300/60 focus:outline-none";
@@ -96,6 +96,24 @@ export default function SystemSettings() {
               value={settings.headerSearch}
               onChange={(e) => handleChange("headerSearch", e.target.value)}
             />
+          </label>
+          <label className="space-y-2 text-sm text-slate-200">
+            <span>Cache TTL (minutes)</span>
+            <input
+              type="number"
+              className={inputClass}
+              value={settings.cacheTTL}
+              onChange={(e) => handleChange("cacheTTL", Number(e.target.value))}
+            />
+          </label>
+          <label className="flex items-center gap-3 text-sm text-slate-200">
+            <input
+              type="checkbox"
+              checked={settings.debugLogs}
+              onChange={(e) => handleChange("debugLogs", e.target.checked)}
+              className="h-4 w-4 accent-amber-400"
+            />
+            <span>Enable debug logs</span>
           </label>
         </div>
       </div>
