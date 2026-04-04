@@ -29,7 +29,13 @@ npm install
 2) Create environment file
 ```bash
 cp .env.example .env.local
-# update DATABASE_URL to your Supabase/PostgreSQL connection string
+# Update the following variables:
+# - DATABASE_URL: Your Supabase/PostgreSQL connection string
+# - NEXT_PUBLIC_SUPABASE_URL: Your Supabase project URL
+# - NEXT_PUBLIC_SUPABASE_ANON_KEY: Supabase publishable/anon key (safe for browser)
+# - SUPABASE_SERVICE_ROLE_KEY: Service role key (server-side only)
+# - NEXTAUTH_SECRET: Generate with: openssl rand -base64 32
+# - JWT_KEY_ID: JWT signing key ID from Supabase dashboard
 ```
 
 3) Run the dev server
@@ -46,6 +52,7 @@ npm run lint
 ## Auth & session (dev-friendly)
 - `lib/auth.ts` reads a base64url JSON token from the `Authorization: Bearer <token>` header or `kso-session` cookie with shape `{ "userId": "user-1", "role": "MEMBER" }`.
 - Services fall back to mock data if Prisma is unreachable, so pages still render without a live database.
+- **JWT Configuration**: The app uses ECC (P-256 / ES256) for JWT signing. Configure the JWT_KEY_ID from your Supabase dashboard under "JWT Signing Keys".
 
 ## Prisma
 ```bash
