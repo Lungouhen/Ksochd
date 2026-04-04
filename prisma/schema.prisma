@@ -1,0 +1,133 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(cuid())
+  name              String
+  phone             String   @unique
+  email             String?  @unique
+  clan              String?
+  college           String?
+  role              Role     @default(MEMBER)
+  membershipStatus  Status   @default(PENDING)
+  profilePic        String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  registrations     EventRegistration[]
+  notifications     Notification[]
+  payments          Payment[]
+}
+
+model Event {
+  id                   String   @id @default(cuid())
+  title                String
+  description          String
+  date                 DateTime
+  venue                String
+  fee                  Int      @default(0)
+  registrationDeadline DateTime
+  posterUrl            String?
+  createdBy            String   // admin userId
+  createdAt            DateTime @default(now())
+
+  registrations EventRegistration[]
+}
+
+model EventRegistration {
+  id         String   @id @default(cuid())
+  userId     String
+  eventId    String
+  status     RegistrationStatus @default(PENDING)
+  paymentId  String?
+  createdAt  DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  event Event @relation(fields: [eventId], references: [id])
+}
+
+model Content {
+  id         String   @id @default(cuid())
+  type       ContentType
+  title      String
+  body       String?
+  visibility Visibility @default(PUBLIC)
+  mediaUrl   String?
+  createdAt  DateTime @default(now())
+}
+
+model Payment {
+  id         String   @id @default(cuid())
+  userId     String
+  amount     Int
+  status     PaymentStatus
+  razorpayId String?
+  purpose    String   // "membership" or "event"
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  MEMBER
+  MODERATOR
+  ADMIN
+}
+
+enum Status {
+  PENDING
+  ACTIVE
+  EXPIRED
+  REJECTED
+}
+
+enum RegistrationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum ContentType {
+  NEWS
+  GALLERY
+  DOCUMENT
+  ANNOUNCEMENT
+}
+
+enum Visibility {
+  PUBLIC
+  MEMBER
+  ADMIN
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model SystemSetting {
+  id          String   @id @default(cuid())
+  key         String   @unique
+  value       String?
+  isSecret    Boolean  @default(false)
+  description String?
+  updatedAt   DateTime @updatedAt
+  updatedBy   String?
+}
