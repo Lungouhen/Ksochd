@@ -1,33 +1,35 @@
 'use client';
 
 import {
-  Line,
   LineChart,
-  ResponsiveContainer,
-  Tooltip,
+  Line,
   XAxis,
   YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
 } from "recharts";
 import { Card } from "./shared/Card";
 
 const data = [
-  { name: "Mon", visitors: 820, members: 120 },
-  { name: "Tue", visitors: 960, members: 142 },
-  { name: "Wed", visitors: 1120, members: 188 },
-  { name: "Thu", visitors: 980, members: 176 },
-  { name: "Fri", visitors: 1220, members: 210 },
-  { name: "Sat", visitors: 1480, members: 250 },
-  { name: "Sun", visitors: 1360, members: 230 },
+  { day: "1", visitors: 420 },
+  { day: "2", visitors: 890 },
+  { day: "3", visitors: 340 },
+  { day: "4", visitors: 670 },
+  { day: "5", visitors: 520 },
+  { day: "6", visitors: 810 },
+  { day: "7", visitors: 940 },
 ];
 
 export function VisitorsChart() {
   return (
-    <Card title="Visitors" description="Weekly traffic and member sessions">
+    <Card title="Visitors Trend" description="Last 7 days">
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <XAxis dataKey="name" stroke="#94a3b8" tickLine={false} />
-            <YAxis stroke="#94a3b8" tickLine={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
+            <XAxis dataKey="day" stroke="#94a3b8" />
+            <YAxis stroke="#94a3b8" />
             <Tooltip
               contentStyle={{ background: "#0f172a", border: "1px solid #1e293b" }}
               labelStyle={{ color: "#e2e8f0" }}
@@ -35,16 +37,9 @@ export function VisitorsChart() {
             <Line
               type="monotone"
               dataKey="visitors"
-              stroke="#f6c453"
-              strokeWidth={2.5}
-              dot={false}
-            />
-            <Line
-              type="monotone"
-              dataKey="members"
-              stroke="#0ea5a6"
-              strokeWidth={2.5}
-              dot={false}
+              stroke="#14b8a6"
+              strokeWidth={2.4}
+              dot={{ r: 4, strokeWidth: 1 }}
             />
           </LineChart>
         </ResponsiveContainer>

@@ -1,26 +1,25 @@
 'use client';
 
 import {
-  Pie,
   PieChart,
-  ResponsiveContainer,
-  Tooltip,
+  Pie,
   Cell,
+  ResponsiveContainer,
   Legend,
+  Tooltip,
 } from "recharts";
 import { Card } from "./shared/Card";
 
 const data = [
-  { name: "Chrome", value: 54, color: "#f6c453" },
-  { name: "Safari", value: 24, color: "#0ea5a6" },
-  { name: "Firefox", value: 12, color: "#a78bfa" },
-  { name: "Edge", value: 7, color: "#38bdf8" },
-  { name: "Others", value: 3, color: "#94a3b8" },
+  { name: "Chrome", value: 68, color: "#14b8a6" },
+  { name: "Safari", value: 16, color: "#f59e0b" },
+  { name: "Firefox", value: 9, color: "#8b5cf6" },
+  { name: "Others", value: 7, color: "#ec4899" },
 ];
 
 export function BrowserPie() {
   return (
-    <Card title="Top Browsers" description="Share of sessions by browser">
+    <Card title="Browsers" description="Share of sessions">
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
@@ -28,8 +27,8 @@ export function BrowserPie() {
               data={data}
               dataKey="value"
               nameKey="name"
-              innerRadius={60}
-              outerRadius={90}
+              innerRadius={50}
+              outerRadius={80}
               paddingAngle={2}
             >
               {data.map((entry) => (
