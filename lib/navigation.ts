@@ -21,6 +21,16 @@ export const memberNav: NavItem[] = [
     href: "/payments",
     description: "Membership dues, receipts, and Razorpay references.",
   },
+  {
+    label: "Notifications",
+    href: "/notifications",
+    description: "Unread alerts, approvals, and event updates.",
+  },
+  {
+    label: "Gallery",
+    href: "/gallery",
+    description: "Photos and cultural highlights for members.",
+  },
 ];
 
 export const adminNav: NavItem[] = [
@@ -48,6 +58,16 @@ export const adminNav: NavItem[] = [
     label: "Analytics",
     href: "/admin/analytics",
     description: "Engagement, payments, and operational dashboards.",
+  },
+  {
+    label: "Approvals",
+    href: "/admin/approvals",
+    description: "Membership approvals and moderation queue.",
+  },
+  {
+    label: "Payments",
+    href: "/admin/payments",
+    description: "Membership/event payment overview and status.",
   },
 ];
 

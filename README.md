@@ -11,8 +11,8 @@ Single-stream CMS + portal for the Kuki Students Organisation (Chandigarh). Buil
 ## App structure
 - `app/(public)` — public landing tied to the (a) pipeline (public → members → admins)
 - `app/(auth)` — login, registration, OTP screens (phone-first + JWT-ready)
-- `app/(member)` — protected member workspace (dashboard, events, profile, payments)
-- `app/(admin)` — admin console (dashboard, users, content, events, analytics)
+- `app/(member)` — protected member workspace (dashboard, events, profile, payments, notifications, gallery)
+- `app/(admin)` — admin console (dashboard, users, content, events, analytics, approvals, payments)
 - `app/api/trpc` — placeholder for tRPC entrypoint
 - `app/api/webhooks/razorpay` — webhook stub for Razorpay signature handling
 - `components/` — shared layout, UI primitives, and form mocks
@@ -43,9 +43,13 @@ Visit `http://localhost:3000`.
 npm run lint
 ```
 
-## Prisma (optional, when wiring data)
+## Auth & session (dev-friendly)
+- `lib/auth.ts` reads a base64url JSON token from the `Authorization: Bearer <token>` header or `kso-session` cookie with shape `{ "userId": "user-1", "role": "MEMBER" }`.
+- Services fall back to mock data if Prisma is unreachable, so pages still render without a live database.
+
+## Prisma
 ```bash
-npm install prisma --save-dev
+export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ksochd"
 npx prisma generate
 npx prisma migrate dev
 ```
