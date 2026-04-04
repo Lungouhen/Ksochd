@@ -1,20 +1,22 @@
-import { ReactNode } from "react";
-import { PortalShell } from "@/components/layout/portal-shell";
-import { adminNav } from "@/lib/navigation";
+import { Sidebar } from "@/components/admin/Sidebar";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { Toaster } from "sonner";
 
 export default function AdminLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
   return (
-    <PortalShell
-      title="Admin Control Room"
-      subtitle="Moderation, content workflows, and analytics backed by the single-stream core."
-      nav={adminNav}
-      tone="gold"
-    >
-      {children}
-    </PortalShell>
+    <div className="min-h-screen bg-slate-950 text-slate-50 flex">
+      <Sidebar />
+      <div className="flex-1 flex flex-col">
+        <AdminHeader />
+        <main className="flex-1 overflow-y-auto bg-slate-900/60 p-6">
+          {children}
+        </main>
+      </div>
+      <Toaster richColors theme="dark" />
+    </div>
   );
 }
