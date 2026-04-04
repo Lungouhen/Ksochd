@@ -1,6 +1,6 @@
 'use client';
 
-import { Bell, Search } from "@radix-ui/react-icons";
+import { Bell, Search } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 export function AdminHeader() {
