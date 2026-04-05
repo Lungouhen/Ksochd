@@ -1,66 +1,103 @@
 import Link from "next/link";
-import { Globe, Settings, Key, CreditCard, Bell, Shield, Receipt, Mail } from "lucide-react";
+import {
+  Bell,
+  CreditCard,
+  Globe,
+  Key,
+  Mail,
+  Shield,
+  Sparkles,
+  Settings,
+} from "lucide-react";
 
 const settingCards = [
   {
-    title: "Website Settings",
+    title: "Website & Branding",
     icon: Globe,
     href: "/admin/settings/website",
-    desc: "Logos, branding, social links, multi-language",
+    desc: "Logos, hero copy, social links, public pages.",
+    status: "Ready",
   },
   {
-    title: "System & Frontend",
+    title: "System & Navigation",
     icon: Settings,
     href: "/admin/settings/system",
-    desc: "Pagination, menus, SEO, locale",
+    desc: "Menus, SEO, locales, pagination, feature flags.",
+    status: "Autosave on",
   },
   {
     title: "Integrations",
     icon: Key,
     href: "/admin/settings/integrations",
-    desc: "Supabase, Razorpay, reCAPTCHA, Resend",
+    desc: "Supabase, Razorpay, reCAPTCHA, Resend webhooks.",
+    status: "Connected",
   },
   {
     title: "Security & Roles",
     icon: Shield,
     href: "/admin/settings/admin",
-    desc: "RBAC policies, role distribution, audit log",
+    desc: "RBAC policies, moderator limits, audit trail.",
+    status: "RBAC live",
   },
   {
     title: "Billing & Invoices",
-    icon: Receipt,
+    icon: CreditCard,
     href: "/admin/settings/billing",
-    desc: "Plans, invoices, subscription management",
+    desc: "Plans, invoices, receipts, export to CSV/PDF.",
+    status: "Live",
   },
   {
     title: "Notification Templates",
     icon: Mail,
     href: "/admin/settings/notifications",
-    desc: "Email and in-app notification templates",
+    desc: "In-app + email templates, fallback copy, previews.",
+    status: "5 templates",
   },
   {
     title: "Payment Records",
     icon: CreditCard,
     href: "/admin/payments",
-    desc: "Payment records, receipts, exports",
+    desc: "Membership dues, Razorpay IDs, downloadable receipts.",
+    status: "Ledger",
   },
   {
-    title: "Notifications",
+    title: "Notifications Center",
     icon: Bell,
     href: "/admin/notifications",
-    desc: "View and manage portal notifications",
+    desc: "Broadcasts, read status, bell feed.",
+    status: "5 unread",
   },
 ];
 
 export default function SettingsHub() {
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-xs uppercase tracking-wide text-slate-400">Settings</p>
-        <h1 className="text-2xl font-semibold text-white">Settings Hub</h1>
-        <p className="text-sm text-slate-300">
-          Manage your portal configuration, integrations, and preferences.
-        </p>
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs uppercase tracking-[0.12em] text-amber-200/80">
+            Settings
+          </p>
+          <h1 className="text-2xl font-semibold text-white">Configuration hub</h1>
+          <p className="text-sm text-slate-300">
+            Every card opens a real workspace — branding, integrations, payments,
+            and notifications are one tap away.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Link
+            href="/admin/dashboard"
+            className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:border-teal-400/25 hover:bg-teal-500/10"
+          >
+            <Sparkles className="h-4 w-4 text-amber-200" />
+            Back to dashboard
+          </Link>
+          <Link
+            href="/admin/settings/website"
+            className="flex items-center gap-2 rounded-lg border border-teal-400/30 bg-teal-500/15 px-4 py-2 text-sm font-semibold text-white transition hover:border-teal-300/50 hover:bg-teal-500/25"
+          >
+            Update branding
+          </Link>
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -70,10 +107,11 @@ export default function SettingsHub() {
             <Link
               key={card.href}
               href={card.href}
-              className="group rounded-2xl border border-white/10 bg-slate-900/70 p-4 shadow-lg shadow-black/30 transition hover:-translate-y-1 hover:border-teal-400/30 hover:bg-slate-900/80"
+              className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-4 shadow-lg shadow-black/30 transition hover:-translate-y-1 hover:border-teal-400/25 hover:bg-slate-900/80"
             >
-              <div className="mb-3 flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/15 text-teal-200">
+              <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-teal-500/20 via-transparent to-transparent opacity-70 blur-3xl" />
+              <div className="relative mb-4 flex items-center gap-3">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-500/15 text-teal-200 ring-1 ring-white/5">
                   <Icon className="h-5 w-5" />
                 </span>
                 <div>
@@ -81,9 +119,14 @@ export default function SettingsHub() {
                   <p className="text-xs text-slate-300">{card.desc}</p>
                 </div>
               </div>
-              <span className="text-xs font-semibold uppercase text-teal-300 opacity-0 transition group-hover:opacity-100">
-                Open →
-              </span>
+              <div className="relative flex items-center justify-between">
+                <span className="rounded-full bg-amber-400/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-amber-50">
+                  {card.status}
+                </span>
+                <span className="text-xs font-semibold uppercase text-teal-200 opacity-0 transition group-hover:opacity-100">
+                  Open →
+                </span>
+              </div>
             </Link>
           );
         })}

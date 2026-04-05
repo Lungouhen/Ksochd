@@ -7,6 +7,7 @@ import { useSidebar } from './sidebar-context';
 
 const routeLabels: Record<string, string> = {
   '/admin': 'Dashboard',
+  '/admin/dashboard': 'Dashboard',
   '/admin/members': 'Members',
   '/admin/events': 'Events',
   '/admin/gallery': 'Gallery',
@@ -37,7 +38,7 @@ export function AdminHeader() {
   const title = getBreadcrumb(pathname || '/admin');
 
   return (
-    <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-white/10 bg-slate-900/70 px-4 py-3 backdrop-blur-lg md:px-6">
+    <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-white/10 bg-slate-950/80 px-4 py-3 backdrop-blur-lg md:px-6">
       <div className="flex items-center gap-3">
         <button
           onClick={toggle}
@@ -50,7 +51,12 @@ export function AdminHeader() {
           <p className="text-xs uppercase tracking-wider text-slate-400">
             Admin Portal
           </p>
-          <h1 className="text-lg font-semibold text-white">{title}</h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-lg font-semibold text-white">{title}</h1>
+            <span className="rounded-full bg-teal-500/15 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-teal-100">
+              Live
+            </span>
+          </div>
         </div>
       </div>
 
@@ -60,7 +66,7 @@ export function AdminHeader() {
           <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
           <input
             className="w-48 rounded-full border border-white/10 bg-slate-800/80 py-2 pl-9 pr-4 text-sm text-white placeholder:text-slate-500 focus:border-teal-400/60 focus:outline-none lg:w-56"
-            placeholder="Search…"
+            placeholder="Search members, events, payments…"
           />
         </div>
 
