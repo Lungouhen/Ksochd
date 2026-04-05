@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Globe, Settings, Key, CreditCard, Bell, Shield } from "lucide-react";
+import { Globe, Settings, Key, CreditCard, Bell, Shield, Receipt, Mail } from "lucide-react";
 
 const settingCards = [
   {
@@ -21,7 +21,25 @@ const settingCards = [
     desc: "Supabase, Razorpay, reCAPTCHA, Resend",
   },
   {
-    title: "Payments Config",
+    title: "Security & Roles",
+    icon: Shield,
+    href: "/admin/settings/admin",
+    desc: "RBAC policies, role distribution, audit log",
+  },
+  {
+    title: "Billing & Invoices",
+    icon: Receipt,
+    href: "/admin/settings/billing",
+    desc: "Plans, invoices, subscription management",
+  },
+  {
+    title: "Notification Templates",
+    icon: Mail,
+    href: "/admin/settings/notifications",
+    desc: "Email and in-app notification templates",
+  },
+  {
+    title: "Payment Records",
     icon: CreditCard,
     href: "/admin/payments",
     desc: "Payment records, receipts, exports",
@@ -30,13 +48,7 @@ const settingCards = [
     title: "Notifications",
     icon: Bell,
     href: "/admin/notifications",
-    desc: "Email and in-app notification templates",
-  },
-  {
-    title: "Security & Roles",
-    icon: Shield,
-    href: "/admin/members",
-    desc: "Member roles, permissions, access control",
+    desc: "View and manage portal notifications",
   },
 ];
 

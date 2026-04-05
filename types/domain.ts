@@ -1,40 +1,13 @@
-export enum Role {
-  MEMBER = "MEMBER",
-  MODERATOR = "MODERATOR",
-  ADMIN = "ADMIN",
-}
+export {
+  Role,
+  Status,
+  RegistrationStatus,
+  ContentType,
+  Visibility,
+  PaymentStatus,
+} from "@prisma/client";
 
-export enum Status {
-  PENDING = "PENDING",
-  ACTIVE = "ACTIVE",
-  EXPIRED = "EXPIRED",
-  REJECTED = "REJECTED",
-}
-
-export enum RegistrationStatus {
-  PENDING = "PENDING",
-  CONFIRMED = "CONFIRMED",
-  CANCELLED = "CANCELLED",
-}
-
-export enum ContentType {
-  NEWS = "NEWS",
-  GALLERY = "GALLERY",
-  DOCUMENT = "DOCUMENT",
-  ANNOUNCEMENT = "ANNOUNCEMENT",
-}
-
-export enum Visibility {
-  PUBLIC = "PUBLIC",
-  MEMBER = "MEMBER",
-  ADMIN = "ADMIN",
-}
-
-export enum PaymentStatus {
-  PENDING = "PENDING",
-  PAID = "PAID",
-  FAILED = "FAILED",
-}
+import type { Role, Status } from "@prisma/client";
 
 export type MemberProfile = {
   id: string;
