@@ -17,7 +17,7 @@ import {
 import { useSidebar } from './sidebar-context';
 
 const menuItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard', badge: 'Live' },
+  { icon: LayoutDashboard, label: 'Dashboard', href: '/admin', badge: 'Live' },
   { icon: Users, label: 'Members', href: '/admin/members', badge: '12 pending' },
   { icon: Calendar, label: 'Events', href: '/admin/events', badge: '3 open' },
   { icon: Image, label: 'Gallery', href: '/admin/gallery' },
@@ -52,7 +52,7 @@ export function Sidebar() {
         {/* Logo */}
         <div className="flex items-center justify-between px-5 py-5">
           <Link
-            href="/admin/dashboard"
+            href="/admin"
             className="flex items-center gap-3"
             onClick={close}
           >
@@ -92,7 +92,7 @@ export function Sidebar() {
             const isActive =
               pathname === item.href ||
               pathname.startsWith(`${item.href}/`) ||
-              (item.href === '/admin/dashboard' && pathname === '/admin');
+              (item.href === '/admin' && pathname === '/admin/dashboard');
             const Icon = item.icon;
 
             return (

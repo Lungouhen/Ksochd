@@ -1,14 +1,5 @@
 import Link from "next/link";
-import {
-  Bell,
-  CreditCard,
-  Globe,
-  Key,
-  Mail,
-  Shield,
-  Sparkles,
-  Settings,
-} from "lucide-react";
+import { CreditCard, Globe, Key, Sparkles, Settings } from "lucide-react";
 
 const settingCards = [
   {
@@ -33,39 +24,11 @@ const settingCards = [
     status: "Connected",
   },
   {
-    title: "Security & Roles",
-    icon: Shield,
-    href: "/admin/settings/admin",
-    desc: "RBAC policies, moderator limits, audit trail.",
-    status: "RBAC live",
-  },
-  {
-    title: "Billing & Invoices",
-    icon: CreditCard,
-    href: "/admin/settings/billing",
-    desc: "Plans, invoices, receipts, export to CSV/PDF.",
-    status: "Live",
-  },
-  {
-    title: "Notification Templates",
-    icon: Mail,
-    href: "/admin/settings/notifications",
-    desc: "In-app + email templates, fallback copy, previews.",
-    status: "5 templates",
-  },
-  {
     title: "Payment Records",
     icon: CreditCard,
     href: "/admin/payments",
     desc: "Membership dues, Razorpay IDs, downloadable receipts.",
     status: "Ledger",
-  },
-  {
-    title: "Notifications Center",
-    icon: Bell,
-    href: "/admin/notifications",
-    desc: "Broadcasts, read status, bell feed.",
-    status: "5 unread",
   },
 ];
 
@@ -79,8 +42,7 @@ export default function SettingsHub() {
           </p>
           <h1 className="text-2xl font-semibold text-white">Configuration hub</h1>
           <p className="text-sm text-slate-300">
-            Every card opens a real workspace — branding, integrations, payments,
-            and notifications are one tap away.
+            Every card opens a real workspace — branding, system defaults, integrations, and payments are one tap away.
           </p>
         </div>
         <div className="flex gap-2">
@@ -92,15 +54,15 @@ export default function SettingsHub() {
             Back to dashboard
           </Link>
           <Link
-            href="/admin/settings/website"
+            href="/admin/payments"
             className="flex items-center gap-2 rounded-lg border border-teal-400/30 bg-teal-500/15 px-4 py-2 text-sm font-semibold text-white transition hover:border-teal-300/50 hover:bg-teal-500/25"
           >
-            Update branding
+            Go to payments
           </Link>
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2">
         {settingCards.map((card) => {
           const Icon = card.icon;
           return (
