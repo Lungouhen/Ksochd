@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Eye, EyeOff, Save } from "lucide-react";
+import { Copy, Eye, EyeOff, Save, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 type Setting = {
@@ -46,12 +46,27 @@ export default function IntegrationsSettings() {
     toast.success("Copied to clipboard");
   };
 
+  const [saving, setSaving] = useState(false);
+
   const handleSave = async () => {
-    // TODO: Persist to SystemSetting via Prisma/Supabase
-    toast.success(
-      "All integrations saved! Restart server if needed for env override.",
-    );
-    console.log("Saved settings:", settings);
+    setSaving(true);
+    try {
+      const res = await fetch("/api/settings/integrations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        toast.success(`${data.savedCount} integration settings saved successfully.`);
+      } else {
+        toast.error(data.error ?? "Failed to save settings.");
+      }
+    } catch {
+      toast.error("Network error. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -68,10 +83,11 @@ export default function IntegrationsSettings() {
         </div>
         <button
           onClick={handleSave}
-          className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-emerald-400"
+          disabled={saving}
+          className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:-translate-y-0.5 hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          <Save className="h-4 w-4" />
-          Save all changes
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          {saving ? "Saving..." : "Save all changes"}
         </button>
       </div>
 

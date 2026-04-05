@@ -19,12 +19,14 @@ function decodeToken(raw?: string): Partial<Session> {
 }
 
 export async function getSession(): Promise<Session> {
-  const authHeader = headers().get("authorization");
+  const hdrs = await headers();
+  const authHeader = hdrs.get("authorization");
   const bearer =
     authHeader && authHeader.toLowerCase().startsWith("bearer ")
       ? authHeader.slice(7)
       : undefined;
-  const cookieToken = cookies().get("kso-session")?.value;
+  const cookieStore = await cookies();
+  const cookieToken = cookieStore.get("kso-session")?.value;
   const rawToken = bearer ?? cookieToken;
   const decoded = decodeToken(rawToken);
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CreditCard, Globe, Key, Mail, Settings, Shield } from "lucide-react";
+import { Globe, Settings, Key, CreditCard, Bell, Shield, Receipt, Mail } from "lucide-react";
 
 const settingCards = [
   {
@@ -21,22 +21,34 @@ const settingCards = [
     desc: "Supabase, Razorpay, reCAPTCHA, Resend",
   },
   {
-    title: "Admin & Security",
+    title: "Security & Roles",
     icon: Shield,
     href: "/admin/settings/admin",
-    desc: "Roles, permissions, audit",
+    desc: "RBAC policies, role distribution, audit log",
   },
   {
-    title: "Billing",
-    icon: CreditCard,
+    title: "Billing & Invoices",
+    icon: Receipt,
     href: "/admin/settings/billing",
-    desc: "Plans, invoices, receipts",
+    desc: "Plans, invoices, subscription management",
   },
   {
-    title: "Notifications",
+    title: "Notification Templates",
     icon: Mail,
     href: "/admin/settings/notifications",
     desc: "Email and in-app notification templates",
+  },
+  {
+    title: "Payment Records",
+    icon: CreditCard,
+    href: "/admin/payments",
+    desc: "Payment records, receipts, exports",
+  },
+  {
+    title: "Notifications",
+    icon: Bell,
+    href: "/admin/notifications",
+    desc: "View and manage portal notifications",
   },
 ];
 
@@ -47,7 +59,7 @@ export default function SettingsHub() {
         <p className="text-xs uppercase tracking-wide text-slate-400">Settings</p>
         <h1 className="text-2xl font-semibold text-white">Settings Hub</h1>
         <p className="text-sm text-slate-300">
-          SaaS-style settings overview. Connect Supabase later to persist changes.
+          Manage your portal configuration, integrations, and preferences.
         </p>
       </div>
 
@@ -58,10 +70,10 @@ export default function SettingsHub() {
             <Link
               key={card.href}
               href={card.href}
-              className="group rounded-2xl border border-white/10 bg-slate-900/70 p-4 shadow-lg shadow-black/30 transition hover:-translate-y-1 hover:border-amber-300/40 hover:bg-slate-900/80"
+              className="group rounded-2xl border border-white/10 bg-slate-900/70 p-4 shadow-lg shadow-black/30 transition hover:-translate-y-1 hover:border-teal-400/30 hover:bg-slate-900/80"
             >
               <div className="mb-3 flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/15 text-amber-200">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-500/15 text-teal-200">
                   <Icon className="h-5 w-5" />
                 </span>
                 <div>
@@ -69,7 +81,7 @@ export default function SettingsHub() {
                   <p className="text-xs text-slate-300">{card.desc}</p>
                 </div>
               </div>
-              <span className="text-xs font-semibold uppercase text-amber-200 opacity-0 transition group-hover:opacity-100">
+              <span className="text-xs font-semibold uppercase text-teal-300 opacity-0 transition group-hover:opacity-100">
                 Open →
               </span>
             </Link>
