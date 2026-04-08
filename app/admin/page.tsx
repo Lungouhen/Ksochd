@@ -18,6 +18,9 @@ import {
   Clock,
   CheckCircle2,
   XCircle,
+  FileText,
+  Palette,
+  DollarSign,
 } from "lucide-react";
 
 export default async function AdminDashboard() {
@@ -102,6 +105,9 @@ export default async function AdminDashboard() {
   const quickActions = [
     { label: "Add Member", href: "/admin/members", icon: UserPlus },
     { label: "Create Event", href: "/admin/events", icon: Calendar },
+    { label: "Create Page", href: "/admin/cms/pages", icon: FileText },
+    { label: "Manage Themes", href: "/admin/themes", icon: Palette },
+    { label: "Manage Ads", href: "/admin/ads", icon: DollarSign },
     { label: "View Payments", href: "/admin/payments", icon: CreditCard },
     { label: "Send Notification", href: "/admin/notifications", icon: Bell },
     { label: "Settings", href: "/admin/settings", icon: Settings },
