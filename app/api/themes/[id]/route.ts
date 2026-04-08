@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
+import type { Theme } from "@prisma/client";
 
 export async function PATCH(
   req: NextRequest,
@@ -10,24 +11,19 @@ export async function PATCH(
 
   const result = await withPrisma(
     async (prisma) => {
-      try {
-        const theme = await prisma.theme.update({
-          where: { id },
-          data: body,
-        });
+      const theme = await prisma.theme.update({
+        where: { id },
+        data: body,
+      });
 
-        return { success: true, theme };
-      } catch (error) {
-        console.error("Error updating theme:", error);
-        return { success: false, error: "Failed to update theme" };
-      }
+      return { theme: theme as Theme | null };
     },
-    () => ({ success: false, error: "Database unavailable" })
+    () => ({ theme: null as Theme | null })
   );
 
-  if (!result.success) {
+  if (!result.theme) {
     return NextResponse.json(
-      { error: result.error },
+      { error: "Failed to update theme" },
       { status: 500 }
     );
   }
@@ -43,32 +39,27 @@ export async function DELETE(
 
   const result = await withPrisma(
     async (prisma) => {
-      try {
-        // Check if theme is default or active
-        const theme = await prisma.theme.findUnique({
-          where: { id },
-        });
+      // Check if theme is default or active
+      const theme = await prisma.theme.findUnique({
+        where: { id },
+      });
 
-        if (theme?.isDefault || theme?.isActive) {
-          return { success: false, error: "Cannot delete active or default theme", badRequest: true };
-        }
-
-        await prisma.theme.delete({
-          where: { id },
-        });
-
-        return { success: true };
-      } catch (error) {
-        console.error("Error deleting theme:", error);
-        return { success: false, error: "Failed to delete theme" };
+      if (theme?.isDefault || theme?.isActive) {
+        return { success: false, badRequest: true };
       }
+
+      await prisma.theme.delete({
+        where: { id },
+      });
+
+      return { success: true, badRequest: false };
     },
-    () => ({ success: false, error: "Database unavailable" })
+    () => ({ success: false, badRequest: false })
   );
 
   if (!result.success) {
     return NextResponse.json(
-      { error: result.error },
+      { error: result.badRequest ? "Cannot delete active or default theme" : "Failed to delete theme" },
       { status: result.badRequest ? 400 : 500 }
     );
   }

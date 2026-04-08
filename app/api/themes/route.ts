@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
+import type { Theme } from "@prisma/client";
 
 export async function GET() {
   const result = await withPrisma(
@@ -22,39 +23,34 @@ export async function POST(req: NextRequest) {
 
   const result = await withPrisma(
     async (prisma) => {
-      try {
-        // If setting as default, unset other defaults
-        if (isDefault) {
-          await prisma.theme.updateMany({
-            where: { isDefault: true },
-            data: { isDefault: false },
-          });
-        }
-
-        const theme = await prisma.theme.create({
-          data: {
-            name,
-            displayName,
-            description,
-            config: JSON.stringify(config || {}),
-            preview,
-            isActive: true,
-            isDefault: isDefault || false,
-          },
+      // If setting as default, unset other defaults
+      if (isDefault) {
+        await prisma.theme.updateMany({
+          where: { isDefault: true },
+          data: { isDefault: false },
         });
-
-        return { success: true, theme };
-      } catch (error) {
-        console.error("Error creating theme:", error);
-        return { success: false, error: "Failed to create theme" };
       }
+
+      const theme = await prisma.theme.create({
+        data: {
+          name,
+          displayName,
+          description,
+          config: JSON.stringify(config || {}),
+          preview,
+          isActive: true,
+          isDefault: isDefault || false,
+        },
+      });
+
+      return { theme: theme as Theme | null };
     },
-    () => ({ success: false, error: "Database unavailable" })
+    () => ({ theme: null as Theme | null })
   );
 
-  if (!result.success) {
+  if (!result.theme) {
     return NextResponse.json(
-      { error: result.error },
+      { error: "Failed to create theme" },
       { status: 500 }
     );
   }

@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
       });
 
       if (!user) {
-        return { error: "User not found", success: false };
+        return { error: "User not found", success: false, memberId: "", status: newStatus };
       }
 
       const updatedUser = await client.user.update({
@@ -47,9 +47,9 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      return { success: true, memberId: updatedUser.id, status: updatedUser.membershipStatus };
+      return { success: true, memberId: updatedUser.id, status: updatedUser.membershipStatus, error: "" };
     },
-    () => ({ success: true, memberId, status: newStatus }),
+    () => ({ success: true, memberId, status: newStatus, error: "" }),
   );
 
   return NextResponse.json(result);

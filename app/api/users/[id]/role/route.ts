@@ -42,7 +42,7 @@ export async function PATCH(
       });
 
       if (!targetUser) {
-        return { error: "User not found", status: 404 };
+        return { error: "User not found", status: 404, user: null };
       }
 
       const oldRole = targetUser.role;
@@ -50,7 +50,8 @@ export async function PATCH(
       // Skip if role is already the same
       if (oldRole === role) {
         return {
-          success: true,
+          error: "",
+          status: 200,
           user: {
             id: targetUser.id,
             name: targetUser.name,
@@ -81,7 +82,8 @@ export async function PATCH(
       });
 
       return {
-        success: true,
+        error: "",
+        status: 200,
         user: {
           id: updatedUser.id,
           name: updatedUser.name,
@@ -89,12 +91,12 @@ export async function PATCH(
         },
       };
     },
-    () => ({ error: "Database unavailable", status: 503 }),
+    () => ({ error: "Database unavailable", status: 503, user: null }),
   );
 
-  if ("error" in result) {
+  if (result.error) {
     return NextResponse.json({ error: result.error }, { status: result.status || 500 });
   }
 
-  return NextResponse.json(result);
+  return NextResponse.json({ user: result.user });
 }

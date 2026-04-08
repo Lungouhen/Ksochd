@@ -45,17 +45,17 @@ export async function GET(
       });
 
       if (!user) {
-        return { error: "User not found", status: 404 };
+        return { error: "User not found", status: 404, user: null };
       }
 
-      return { user };
+      return { error: "", status: 200, user };
     },
-    () => ({ error: "Database unavailable", status: 503 }),
+    () => ({ error: "Database unavailable", status: 503, user: null }),
   );
 
-  if ("error" in result) {
+  if (result.error) {
     return NextResponse.json({ error: result.error }, { status: result.status || 500 });
   }
 
-  return NextResponse.json(result);
+  return NextResponse.json({ user: result.user });
 }

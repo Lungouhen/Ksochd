@@ -95,17 +95,17 @@ export async function POST(request: NextRequest) {
         },
       });
 
-      return { success: true, term };
+      return { term: term as any };
     },
-    () => ({ error: "Database unavailable", status: 503 }),
+    () => ({ term: null as any }),
   );
 
-  if ("error" in result) {
+  if (!result.term) {
     return NextResponse.json(
-      { error: result.error },
-      { status: result.status || 500 }
+      { error: "Failed to create term" },
+      { status: 500 }
     );
   }
 
-  return NextResponse.json(result);
+  return NextResponse.json({ term: result.term }, { status: 201 });
 }

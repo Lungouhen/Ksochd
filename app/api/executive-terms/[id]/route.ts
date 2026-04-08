@@ -27,7 +27,7 @@ export async function PATCH(
       });
 
       if (!existingTerm) {
-        return { error: "Term not found", status: 404 };
+        return { error: "Term not found", term: null };
       }
 
       // If setting as current, unset all other current terms
@@ -64,19 +64,19 @@ export async function PATCH(
         },
       });
 
-      return { success: true, term };
+      return { term, error: null };
     },
-    () => ({ error: "Database unavailable", status: 503 }),
+    () => ({ term: null, error: "Database unavailable" }),
   );
 
-  if ("error" in result) {
+  if (result.error) {
     return NextResponse.json(
       { error: result.error },
-      { status: result.status || 500 }
+      { status: result.error === "Term not found" ? 404 : 503 }
     );
   }
 
-  return NextResponse.json(result);
+  return NextResponse.json({ term: result.term });
 }
 
 // DELETE - Delete a term
@@ -99,14 +99,14 @@ export async function DELETE(
       });
 
       if (!term) {
-        return { error: "Term not found", status: 404 };
+        return { error: "Term not found", success: false };
       }
 
       // Prevent deletion of current term
       if (term.isCurrent) {
         return {
           error: "Cannot delete current term. Set another term as current first.",
-          status: 400,
+          success: false,
         };
       }
 
@@ -129,17 +129,19 @@ export async function DELETE(
         },
       });
 
-      return { success: true };
+      return { success: true, error: null };
     },
-    () => ({ error: "Database unavailable", status: 503 }),
+    () => ({ success: false, error: "Database unavailable" }),
   );
 
-  if ("error" in result) {
+  if (!result.success) {
+    const status = result.error === "Term not found" ? 404 :
+                   result.error?.includes("Cannot delete") ? 400 : 503;
     return NextResponse.json(
       { error: result.error },
-      { status: result.status || 500 }
+      { status }
     );
   }
 
-  return NextResponse.json(result);
+  return NextResponse.json({ success: true });
 }

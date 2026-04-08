@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
+import type { Theme } from "@prisma/client";
 
 export async function POST(
   req: NextRequest,
@@ -9,34 +10,29 @@ export async function POST(
 
   const result = await withPrisma(
     async (prisma) => {
-      try {
-        // Unset all other defaults
-        await prisma.theme.updateMany({
-          where: { isDefault: true },
-          data: { isDefault: false },
-        });
+      // Unset all other defaults
+      await prisma.theme.updateMany({
+        where: { isDefault: true },
+        data: { isDefault: false },
+      });
 
-        // Set this theme as default and active
-        const theme = await prisma.theme.update({
-          where: { id },
-          data: {
-            isDefault: true,
-            isActive: true,
-          },
-        });
+      // Set this theme as default and active
+      const theme = await prisma.theme.update({
+        where: { id },
+        data: {
+          isDefault: true,
+          isActive: true,
+        },
+      });
 
-        return { success: true, theme };
-      } catch (error) {
-        console.error("Error setting default theme:", error);
-        return { success: false, error: "Failed to set default theme" };
-      }
+      return { theme: theme as Theme | null };
     },
-    () => ({ success: false, error: "Database unavailable" })
+    () => ({ theme: null as Theme | null })
   );
 
-  if (!result.success) {
+  if (!result.theme) {
     return NextResponse.json(
-      { error: result.error },
+      { error: "Failed to set default theme" },
       { status: 500 }
     );
   }
