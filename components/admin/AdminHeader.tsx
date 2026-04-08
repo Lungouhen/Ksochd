@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bell, Search, Menu, ArrowLeftRight } from 'lucide-react';
+import { Bell, Search, Menu, ArrowLeftRight, Calendar } from 'lucide-react';
 import { useSidebar } from './sidebar-context';
+import { useEffect, useState } from 'react';
 
 const routeLabels: Record<string, string> = {
   '/admin': 'Dashboard',
@@ -35,6 +36,20 @@ export function AdminHeader() {
   const pathname = usePathname();
   const { toggle } = useSidebar();
   const title = getBreadcrumb(pathname || '/admin');
+  const [currentTerm, setCurrentTerm] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch('/api/executive-terms/current')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.term) {
+          setCurrentTerm(`${data.term.startYear}-${data.term.endYear}`);
+        }
+      })
+      .catch(() => {
+        // Silently fail
+      });
+  }, []);
 
   return (
     <header className="sticky top-0 z-20 flex items-center justify-between gap-4 border-b border-white/10 bg-slate-900/70 px-4 py-3 backdrop-blur-lg md:px-6">
@@ -47,9 +62,20 @@ export function AdminHeader() {
           <Menu className="h-5 w-5" />
         </button>
         <div>
-          <p className="text-xs uppercase tracking-wider text-slate-400">
-            Admin Portal
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-xs uppercase tracking-wider text-slate-400">
+              Admin Portal
+            </p>
+            {currentTerm && (
+              <span
+                className="flex items-center gap-1 rounded-full bg-teal-500/20 px-2 py-0.5 text-xs font-semibold text-teal-300"
+                title="Current Executive Term"
+              >
+                <Calendar className="h-3 w-3" aria-hidden="true" />
+                {currentTerm}
+              </span>
+            )}
+          </div>
           <h1 className="text-lg font-semibold text-white">{title}</h1>
         </div>
       </div>
