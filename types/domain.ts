@@ -5,6 +5,11 @@ export {
   ContentType,
   Visibility,
   PaymentStatus,
+  PageStatus,
+  BlockType,
+  MediaType,
+  AdType,
+  AdPosition,
 } from "@prisma/client";
 
 import type { Role, Status } from "@prisma/client";

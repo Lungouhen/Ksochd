@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Globe, Settings, Key, CreditCard, Bell, Shield, Receipt, Mail } from "lucide-react";
+import { Globe, Settings, Key, CreditCard, Bell, Shield, Receipt, Mail, Search } from "lucide-react";
 
 const settingCards = [
   {
@@ -7,6 +7,12 @@ const settingCards = [
     icon: Globe,
     href: "/admin/settings/website",
     desc: "Logos, branding, social links, multi-language",
+  },
+  {
+    title: "SEO & Analytics",
+    icon: Search,
+    href: "/admin/settings/seo",
+    desc: "SEO defaults, Google Tag Manager, structured data",
   },
   {
     title: "System & Frontend",

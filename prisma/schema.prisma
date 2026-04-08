@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -130,4 +129,179 @@ model SystemSetting {
   description String?
   updatedAt   DateTime @updatedAt
   updatedBy   String?
+}
+
+// CMS Models
+model Page {
+  id          String      @id @default(cuid())
+  slug        String      @unique
+  title       String
+  content     String      @db.Text
+  excerpt     String?
+  status      PageStatus  @default(DRAFT)
+  themeId     String?
+  seoId       String?     @unique
+  publishedAt DateTime?
+  createdBy   String
+  updatedBy   String?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  theme       Theme?      @relation(fields: [themeId], references: [id])
+  seo         SEO?        @relation(fields: [seoId], references: [id])
+  blocks      PageBlock[]
+
+  @@index([slug])
+  @@index([status])
+}
+
+model PageBlock {
+  id        String    @id @default(cuid())
+  pageId    String
+  type      BlockType
+  content   String    @db.Text
+  settings  Json?     // JSON for block-specific settings
+  order     Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  page      Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([pageId])
+}
+
+model MediaLibrary {
+  id          String    @id @default(cuid())
+  filename    String
+  url         String
+  type        MediaType
+  size        Int       // in bytes
+  alt         String?
+  caption     String?
+  uploadedBy  String
+  createdAt   DateTime  @default(now())
+
+  @@index([type])
+  @@index([uploadedBy])
+}
+
+// SEO Models
+model SEO {
+  id               String   @id @default(cuid())
+  title            String
+  description      String
+  keywords         String?
+  ogTitle          String?
+  ogDescription    String?
+  ogImage          String?
+  twitterCard      String?  @default("summary_large_image")
+  twitterTitle     String?
+  twitterDescription String?
+  twitterImage     String?
+  canonicalUrl     String?
+  noindex          Boolean  @default(false)
+  nofollow         Boolean  @default(false)
+  structuredData   Json?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  page             Page?
+}
+
+// Theme Models
+model Theme {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  displayName String
+  description String?
+  isActive    Boolean     @default(false)
+  isDefault   Boolean     @default(false)
+  config      Json        // JSON for theme configuration
+  preview     String?     // Preview image URL
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  pages       Page[]
+
+  @@index([isActive])
+}
+
+// Ads Models
+model Ad {
+  id          String     @id @default(cuid())
+  name        String
+  type        AdType
+  position    AdPosition
+  content     String     @db.Text // HTML/Script content
+  imageUrl    String?
+  linkUrl     String?
+  isActive    Boolean    @default(true)
+  startDate   DateTime?
+  endDate     DateTime?
+  impressions Int        @default(0)
+  clicks      Int        @default(0)
+  createdBy   String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@index([position])
+  @@index([isActive])
+  @@index([type])
+}
+
+// GTM Configuration
+model GTMConfig {
+  id            String   @id @default(cuid())
+  containerId   String   // GTM container ID (e.g., GTM-XXXXXX)
+  isEnabled     Boolean  @default(true)
+  environment   String?  // For GTM environment variables
+  customEvents  Json?    // Custom event configurations
+  updatedAt     DateTime @updatedAt
+  updatedBy     String?
+}
+
+enum PageStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum BlockType {
+  HEADING
+  PARAGRAPH
+  IMAGE
+  VIDEO
+  GALLERY
+  QUOTE
+  CODE
+  DIVIDER
+  BUTTON
+  FORM
+  CUSTOM_HTML
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+  AUDIO
+}
+
+enum AdType {
+  BANNER
+  SIDEBAR
+  INLINE
+  POPUP
+  NATIVE
+}
+
+enum AdPosition {
+  HEADER
+  FOOTER
+  SIDEBAR_LEFT
+  SIDEBAR_RIGHT
+  CONTENT_TOP
+  CONTENT_MIDDLE
+  CONTENT_BOTTOM
+  POPUP
 }

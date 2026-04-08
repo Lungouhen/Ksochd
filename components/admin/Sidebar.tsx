@@ -11,6 +11,10 @@ import {
   Bell,
   Settings,
   X,
+  FileText,
+  Palette,
+  DollarSign,
+  BarChart3,
 } from 'lucide-react';
 import { useSidebar } from './sidebar-context';
 
@@ -19,7 +23,11 @@ const menuItems = [
   { icon: Users, label: 'Members', href: '/admin/members' },
   { icon: Calendar, label: 'Events', href: '/admin/events' },
   { icon: Image, label: 'Gallery', href: '/admin/gallery' },
+  { icon: FileText, label: 'CMS', href: '/admin/cms/pages' },
+  { icon: Palette, label: 'Themes', href: '/admin/themes' },
+  { icon: DollarSign, label: 'Ads', href: '/admin/ads' },
   { icon: CreditCard, label: 'Payments', href: '/admin/payments' },
+  { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
   { icon: Bell, label: 'Notifications', href: '/admin/notifications' },
   { icon: Settings, label: 'Settings', href: '/admin/settings' },
 ];
