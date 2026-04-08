@@ -1,4 +1,5 @@
-import { VisitorsChart } from "@/components/admin/VisitorsChart";
+import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import { getAdminSummary, getPendingMembers } from "@/server/services/user.service";
 import Link from "next/link";
 import {
@@ -22,6 +23,31 @@ import {
   Palette,
   DollarSign,
 } from "lucide-react";
+
+// Lazy load the chart component (will render on client side)
+const VisitorsChart = dynamic(
+  () => import("@/components/admin/VisitorsChart").then((mod) => ({ default: mod.VisitorsChart })),
+  {
+    loading: () => (
+      <div className="rounded-2xl border border-white/10 bg-slate-900/70 p-6">
+        <div className="mb-4 space-y-2">
+          <div className="h-5 w-32 animate-pulse rounded bg-slate-800" />
+          <div className="h-4 w-48 animate-pulse rounded bg-slate-800" />
+        </div>
+        <div className="h-64 animate-pulse rounded-lg bg-slate-800" />
+      </div>
+    ),
+  }
+);
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+  description: "Administrative dashboard for KSO Chandigarh portal management.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function AdminDashboard() {
   const [summary, pendingMembers] = await Promise.all([

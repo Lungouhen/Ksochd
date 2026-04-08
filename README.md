@@ -7,6 +7,8 @@ Single-stream CMS + portal for the Kuki Students Organisation (Chandigarh). Buil
 - TypeScript + ESLint
 - Tailwind (v4) styling with custom teal/gold theme
 - Prisma schema (Supabase/PostgreSQL ready)
+- Mobile-first responsive design
+- PWA-ready configuration
 
 ## App structure
 - `app/(public)` — public landing tied to the (a) pipeline (public → members → admins)
@@ -59,3 +61,30 @@ npx prisma migrate dev
 - Connect `server/services/*` to Prisma client and tRPC routers.
 - Implement Razorpay signature validation in `app/api/webhooks/razorpay/route.ts`.
 - Replace mock UI data with live queries and add loading/error states.
+
+## Mobile & PWA
+
+This portal is mobile-ready with responsive design and PWA capabilities:
+
+### Current Mobile Features
+- ✅ Viewport and mobile meta tags configured
+- ✅ Responsive layouts (mobile, tablet, desktop)
+- ✅ Touch-optimized navigation with mobile sidebar
+- ✅ Mobile-specific CSS optimizations
+- ✅ PWA manifest.json configured
+- ✅ Theme colors and app metadata
+
+### To Complete PWA Setup
+1. Create icon assets (see `docs/PWA_ICONS.md`)
+2. Install and configure next-pwa package
+3. Test "Add to Home Screen" functionality
+4. For Android APK, see `docs/ANDROID_DEPLOYMENT.md`
+
+### Testing
+See `docs/MOBILE_TESTING.md` for comprehensive mobile testing checklist.
+
+### Documentation
+- `docs/PWA_ICONS.md` - Guide for creating PWA icons
+- `docs/ANDROID_DEPLOYMENT.md` - Complete Android APK deployment guide
+- `docs/MOBILE_TESTING.md` - Mobile testing checklist and procedures
+

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { GTMScript, GTMNoScript } from "@/components/seo/GoogleTagManager";
+import { getSiteSettings } from "@/server/services/settings.service";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff2",
@@ -19,11 +20,66 @@ const geistMono = localFont({
   fallback: ["ui-monospace", "monospace"],
 });
 
-export const metadata: Metadata = {
-  title: "KSO Chandigarh Portal",
-  description:
-    "Single-stream portal for Kuki Students Organisation (Chandigarh) members, admins, and guests.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+
+  return {
+    title: {
+      default: settings.siteName,
+      template: `%s | ${settings.siteName}`,
+    },
+    description: settings.siteDescription,
+    applicationName: settings.siteName,
+    appleWebApp: {
+      capable: true,
+      statusBarStyle: "default",
+      title: settings.siteName,
+    },
+    formatDetection: {
+      telephone: false,
+    },
+    openGraph: {
+      type: "website",
+      siteName: settings.siteName,
+      title: settings.siteName,
+      description: settings.siteDescription,
+      images: settings.ogImageUrl ? [{ url: settings.ogImageUrl }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: settings.siteName,
+      description: settings.siteDescription,
+      images: settings.twitterImageUrl
+        ? [settings.twitterImageUrl]
+        : undefined,
+    },
+    viewport: {
+      width: "device-width",
+      initialScale: 1,
+      maximumScale: 5,
+      userScalable: true,
+    },
+    themeColor: [
+      { media: "(prefers-color-scheme: light)", color: settings.primaryColor },
+      { media: "(prefers-color-scheme: dark)", color: "#030712" },
+    ],
+    manifest: "/manifest.json",
+    icons: {
+      icon: [
+        { url: settings.faviconUrl, sizes: "any" },
+        { url: settings.icon192Url, sizes: "192x192", type: "image/png" },
+        { url: settings.icon512Url, sizes: "512x512", type: "image/png" },
+      ],
+      apple: [
+        {
+          url: settings.appleTouchIconUrl,
+          sizes: "180x180",
+          type: "image/png",
+        },
+      ],
+    },
+  };
+}
 
 // GTM Container ID - should be loaded from settings in production
 const GTM_ID = process.env.NEXT_PUBLIC_GTM_CONTAINER_ID || "";

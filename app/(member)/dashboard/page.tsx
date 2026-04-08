@@ -1,8 +1,14 @@
+import type { Metadata } from "next";
 import { SectionCard } from "@/components/ui/section-card";
 import { Pill } from "@/components/ui/pill";
 import { getFeaturedContent } from "@/server/services/content.service";
 import { getUpcomingEvents } from "@/server/services/event.service";
 import { getCurrentUser } from "@/server/services/user.service";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Member dashboard with events, notifications, and featured content.",
+};
 
 export default async function MemberDashboard() {
   const [user, events, content] = await Promise.all([

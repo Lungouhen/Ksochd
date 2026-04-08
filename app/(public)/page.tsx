@@ -1,7 +1,30 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { SectionCard } from "@/components/ui/section-card";
 import { Pill } from "@/components/ui/pill";
 import { adminNav, authNav, memberNav } from "@/lib/navigation";
+import { getSiteSettings } from "@/server/services/settings.service";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+
+  return {
+    title: "Home",
+    description: settings.siteDescription,
+    openGraph: {
+      title: settings.siteName,
+      description: settings.siteDescription,
+      type: "website",
+      images: settings.ogImageUrl ? [{ url: settings.ogImageUrl }] : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: settings.siteName,
+      description: settings.siteDescription,
+      images: settings.twitterImageUrl ? [settings.twitterImageUrl] : undefined,
+    },
+  };
+}
 
 const pipeline = [
   {

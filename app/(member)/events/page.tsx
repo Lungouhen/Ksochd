@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { SectionCard } from "@/components/ui/section-card";
 import { getUpcomingEvents } from "@/server/services/event.service";
+
+export const metadata: Metadata = {
+  title: "Events",
+  description: "Browse and register for upcoming KSO Chandigarh events.",
+};
 
 export default async function MemberEvents() {
   const events = await getUpcomingEvents();
