@@ -17,6 +17,13 @@ const defaultSettings: Setting[] = [
   { key: "SUPABASE_SERVICE_ROLE_KEY", value: "", isSecret: true, description: "Service Role Key (for admin actions)" },
   { key: "RAZORPAY_KEY_ID", value: "", isSecret: false, description: "Razorpay Key ID" },
   { key: "RAZORPAY_KEY_SECRET", value: "", isSecret: true, description: "Razorpay Secret Key" },
+  { key: "STRIPE_PUBLIC_KEY", value: "", isSecret: false, description: "Stripe Publishable Key" },
+  { key: "STRIPE_SECRET_KEY", value: "", isSecret: true, description: "Stripe Secret Key" },
+  { key: "STRIPE_WEBHOOK_SECRET", value: "", isSecret: true, description: "Stripe Webhook Secret" },
+  { key: "PAYPAL_CLIENT_ID", value: "", isSecret: false, description: "PayPal Client ID" },
+  { key: "PAYPAL_CLIENT_SECRET", value: "", isSecret: true, description: "PayPal Secret Key" },
+  { key: "PAYPAL_MODE", value: "sandbox", isSecret: false, description: "PayPal Mode (sandbox/live)" },
+  { key: "ACTIVE_PAYMENT_GATEWAY", value: "RAZORPAY", isSecret: false, description: "Active Payment Gateway (RAZORPAY/STRIPE/PAYPAL)" },
   { key: "RECAPTCHA_SITE_KEY", value: "", isSecret: false, description: "Google reCAPTCHA v3 Site Key" },
   { key: "RECAPTCHA_SECRET_KEY", value: "", isSecret: true, description: "reCAPTCHA Secret Key" },
   { key: "RESEND_API_KEY", value: "", isSecret: true, description: "Resend Email API Key" },
@@ -78,7 +85,7 @@ export default function IntegrationsSettings() {
           </p>
           <h1 className="text-2xl font-semibold text-white">Integrations</h1>
           <p className="text-sm text-slate-300">
-            Configure Supabase, Razorpay, reCAPTCHA, Resend, and other services.
+            Configure Supabase, payment gateways (Razorpay, Stripe, PayPal), reCAPTCHA, Resend, and other services.
           </p>
         </div>
         <button

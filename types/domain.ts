@@ -5,6 +5,7 @@ export {
   ContentType,
   Visibility,
   PaymentStatus,
+  PaymentGateway,
 } from "@prisma/client";
 
 import type { Role, Status } from "@prisma/client";

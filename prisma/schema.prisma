@@ -63,13 +63,17 @@ model Content {
 }
 
 model Payment {
-  id         String   @id @default(cuid())
-  userId     String
-  amount     Int
-  status     PaymentStatus
-  razorpayId String?
-  purpose    String   // "membership" or "event"
-  createdAt  DateTime @default(now())
+  id              String         @id @default(cuid())
+  userId          String
+  amount          Int
+  status          PaymentStatus
+  gateway         PaymentGateway @default(RAZORPAY)
+  gatewayOrderId  String?        // Order ID from the gateway
+  gatewayPaymentId String?       // Payment ID from the gateway (razorpayId, stripe payment intent, etc.)
+  purpose         String         // "membership" or "event"
+  metadata        String?        // JSON string for additional gateway-specific data
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
 
   user User @relation(fields: [userId], references: [id])
 }
@@ -120,6 +124,13 @@ enum PaymentStatus {
   PENDING
   PAID
   FAILED
+  REFUNDED
+}
+
+enum PaymentGateway {
+  RAZORPAY
+  STRIPE
+  PAYPAL
 }
 
 model SystemSetting {

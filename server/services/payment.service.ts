@@ -1,11 +1,12 @@
 import { withPrisma } from "@/lib/prisma";
-import { PaymentStatus } from "@/types/domain";
+import { PaymentStatus, PaymentGateway } from "@/types/domain";
 
 export type PaymentRecord = {
   id: string;
   purpose: string;
   amount: number;
   status: PaymentStatus;
+  gateway: PaymentGateway;
   createdAt: string;
   reference?: string;
 };
@@ -16,6 +17,7 @@ const fallbackPayments: PaymentRecord[] = [
     purpose: "Membership 2026",
     amount: 500,
     status: PaymentStatus.PAID,
+    gateway: PaymentGateway.RAZORPAY,
     createdAt: "2026-04-02",
     reference: "rzp_Abc123",
   },
@@ -24,6 +26,7 @@ const fallbackPayments: PaymentRecord[] = [
     purpose: "Event: Career Mentorship",
     amount: 200,
     status: PaymentStatus.PENDING,
+    gateway: PaymentGateway.RAZORPAY,
     createdAt: "2026-04-01",
     reference: "rzp_Xyz789",
   },
@@ -43,8 +46,9 @@ export async function getRecentPayments(): Promise<PaymentRecord[]> {
         purpose: payment.purpose,
         amount: payment.amount,
         status: payment.status,
+        gateway: payment.gateway,
         createdAt: payment.createdAt.toISOString().split("T")[0],
-        reference: payment.razorpayId ?? undefined,
+        reference: payment.gatewayPaymentId ?? undefined,
       }));
     },
     () => fallbackPayments,
