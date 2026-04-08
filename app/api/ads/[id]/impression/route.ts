@@ -5,26 +5,35 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withPrisma(async (prisma) => {
-    try {
-      const { id } = await params;
+  const { id } = await params;
 
-      const ad = await prisma.ad.update({
-        where: { id },
-        data: {
-          impressions: {
-            increment: 1,
+  const result = await withPrisma(
+    async (prisma) => {
+      try {
+        const ad = await prisma.ad.update({
+          where: { id },
+          data: {
+            impressions: {
+              increment: 1,
+            },
           },
-        },
-      });
+        });
 
-      return NextResponse.json({ ad });
-    } catch (error) {
-      console.error("Error tracking impression:", error);
-      return NextResponse.json(
-        { error: "Failed to track impression" },
-        { status: 500 }
-      );
-    }
-  });
+        return { success: true, ad };
+      } catch (error) {
+        console.error("Error tracking impression:", error);
+        return { success: false, error: "Failed to track impression" };
+      }
+    },
+    () => ({ success: false, error: "Database unavailable" })
+  );
+
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ ad: result.ad });
 }

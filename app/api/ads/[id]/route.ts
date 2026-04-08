@@ -5,46 +5,64 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withPrisma(async (prisma) => {
-    try {
-      const { id } = await params;
-      const body = await req.json();
+  const { id } = await params;
+  const body = await req.json();
 
-      const ad = await prisma.ad.update({
-        where: { id },
-        data: body,
-      });
+  const result = await withPrisma(
+    async (prisma) => {
+      try {
+        const ad = await prisma.ad.update({
+          where: { id },
+          data: body,
+        });
 
-      return NextResponse.json({ ad });
-    } catch (error) {
-      console.error("Error updating ad:", error);
-      return NextResponse.json(
-        { error: "Failed to update ad" },
-        { status: 500 }
-      );
-    }
-  });
+        return { success: true, ad };
+      } catch (error) {
+        console.error("Error updating ad:", error);
+        return { success: false, error: "Failed to update ad" };
+      }
+    },
+    () => ({ success: false, error: "Database unavailable" })
+  );
+
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ ad: result.ad });
 }
 
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withPrisma(async (prisma) => {
-    try {
-      const { id } = await params;
+  const { id } = await params;
 
-      await prisma.ad.delete({
-        where: { id },
-      });
+  const result = await withPrisma(
+    async (prisma) => {
+      try {
+        await prisma.ad.delete({
+          where: { id },
+        });
 
-      return NextResponse.json({ success: true });
-    } catch (error) {
-      console.error("Error deleting ad:", error);
-      return NextResponse.json(
-        { error: "Failed to delete ad" },
-        { status: 500 }
-      );
-    }
-  });
+        return { success: true };
+      } catch (error) {
+        console.error("Error deleting ad:", error);
+        return { success: false, error: "Failed to delete ad" };
+      }
+    },
+    () => ({ success: false, error: "Database unavailable" })
+  );
+
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ success: true });
 }

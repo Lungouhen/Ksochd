@@ -5,58 +5,73 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withPrisma(async (prisma) => {
-    try {
-      const { id } = await params;
-      const body = await req.json();
+  const { id } = await params;
+  const body = await req.json();
 
-      const theme = await prisma.theme.update({
-        where: { id },
-        data: body,
-      });
+  const result = await withPrisma(
+    async (prisma) => {
+      try {
+        const theme = await prisma.theme.update({
+          where: { id },
+          data: body,
+        });
 
-      return NextResponse.json({ theme });
-    } catch (error) {
-      console.error("Error updating theme:", error);
-      return NextResponse.json(
-        { error: "Failed to update theme" },
-        { status: 500 }
-      );
-    }
-  });
+        return { success: true, theme };
+      } catch (error) {
+        console.error("Error updating theme:", error);
+        return { success: false, error: "Failed to update theme" };
+      }
+    },
+    () => ({ success: false, error: "Database unavailable" })
+  );
+
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ theme: result.theme });
 }
 
 export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withPrisma(async (prisma) => {
-    try {
-      const { id } = await params;
+  const { id } = await params;
 
-      // Check if theme is default or active
-      const theme = await prisma.theme.findUnique({
-        where: { id },
-      });
+  const result = await withPrisma(
+    async (prisma) => {
+      try {
+        // Check if theme is default or active
+        const theme = await prisma.theme.findUnique({
+          where: { id },
+        });
 
-      if (theme?.isDefault || theme?.isActive) {
-        return NextResponse.json(
-          { error: "Cannot delete active or default theme" },
-          { status: 400 }
-        );
+        if (theme?.isDefault || theme?.isActive) {
+          return { success: false, error: "Cannot delete active or default theme", badRequest: true };
+        }
+
+        await prisma.theme.delete({
+          where: { id },
+        });
+
+        return { success: true };
+      } catch (error) {
+        console.error("Error deleting theme:", error);
+        return { success: false, error: "Failed to delete theme" };
       }
+    },
+    () => ({ success: false, error: "Database unavailable" })
+  );
 
-      await prisma.theme.delete({
-        where: { id },
-      });
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error },
+      { status: result.badRequest ? 400 : 500 }
+    );
+  }
 
-      return NextResponse.json({ success: true });
-    } catch (error) {
-      console.error("Error deleting theme:", error);
-      return NextResponse.json(
-        { error: "Failed to delete theme" },
-        { status: 500 }
-      );
-    }
-  });
+  return NextResponse.json({ success: true });
 }
