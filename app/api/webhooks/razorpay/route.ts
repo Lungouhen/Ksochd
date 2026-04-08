@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { RazorpayGateway } from "@/lib/payments/razorpay-gateway";
 import { withPrisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
@@ -14,8 +13,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Verify webhook signature
-    const gateway = new RazorpayGateway();
+    // TODO: Verify webhook signature using RazorpayGateway
     const event = body.event;
     const paymentEntity = body.payload?.payment?.entity;
 
