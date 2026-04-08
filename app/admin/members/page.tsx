@@ -1,14 +1,11 @@
-import Link from "next/link";
 import { withPrisma } from "@/lib/prisma";
 import {
   Users,
   UserCheck,
   Clock,
-  XCircle,
-  CheckCircle2,
-  Eye,
   ShieldAlert,
 } from "lucide-react";
+import { MembersTable } from "@/components/admin/MembersTable";
 
 type MemberRow = {
   id: string;
@@ -30,19 +27,6 @@ const fallbackMembers: MemberRow[] = [
   { id: "m-7", name: "Mangkhosei Zou", phone: "+91-9876502345", email: "mangkhosei@ksochd.org", role: "MODERATOR", status: "ACTIVE", joined: "2025-03-05" },
   { id: "m-8", name: "Lhingneithang Mate", phone: "+91-9876506789", email: "lhing@ksochd.org", role: "MEMBER", status: "REJECTED", joined: "2026-03-28" },
 ];
-
-const statusStyles: Record<string, string> = {
-  ACTIVE: "bg-teal-500/20 text-teal-300",
-  PENDING: "bg-amber-500/20 text-amber-300",
-  REJECTED: "bg-red-500/20 text-red-300",
-  EXPIRED: "bg-slate-500/20 text-slate-400",
-};
-
-const roleStyles: Record<string, string> = {
-  ADMIN: "bg-amber-500/20 text-amber-200",
-  MODERATOR: "bg-purple-500/20 text-purple-300",
-  MEMBER: "bg-slate-500/20 text-slate-300",
-};
 
 export default async function MembersPage() {
   const members = await withPrisma(
@@ -101,67 +85,8 @@ export default async function MembersPage() {
         })}
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-2xl border border-white/10 bg-slate-900/70 shadow-lg shadow-black/30">
-        <table className="min-w-full text-sm">
-          <thead className="bg-white/5 text-slate-200">
-            <tr>
-              <th className="px-4 py-3 text-left font-semibold">Name</th>
-              <th className="px-4 py-3 text-left font-semibold">Email</th>
-              <th className="px-4 py-3 text-left font-semibold">Phone</th>
-              <th className="px-4 py-3 text-left font-semibold">Role</th>
-              <th className="px-4 py-3 text-left font-semibold">Status</th>
-              <th className="px-4 py-3 text-left font-semibold">Joined</th>
-              <th className="px-4 py-3 text-left font-semibold">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {members.map((member, idx) => (
-              <tr
-                key={member.id}
-                className={`cursor-pointer transition hover:bg-white/5 ${idx % 2 ? "bg-white/5" : "bg-white/[0.02]"}`}
-              >
-                <td className="px-4 py-3 font-medium text-white">{member.name}</td>
-                <td className="px-4 py-3 text-slate-300">{member.email}</td>
-                <td className="px-4 py-3 text-slate-300">{member.phone}</td>
-                <td className="px-4 py-3">
-                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${roleStyles[member.role] ?? "bg-slate-500/20 text-slate-300"}`}>
-                    {member.role}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[member.status] ?? "bg-slate-500/20 text-slate-400"}`}>
-                    {member.status}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-slate-400">{member.joined}</td>
-                <td className="px-4 py-3">
-                  {member.status === "PENDING" ? (
-                    <div className="flex gap-2">
-                      <button className="flex items-center gap-1 rounded-lg bg-emerald-600/20 px-2.5 py-1 text-xs font-medium text-emerald-300 transition hover:bg-emerald-600/30">
-                        <CheckCircle2 className="h-3 w-3" />
-                        Approve
-                      </button>
-                      <button className="flex items-center gap-1 rounded-lg bg-red-600/20 px-2.5 py-1 text-xs font-medium text-red-300 transition hover:bg-red-600/30">
-                        <XCircle className="h-3 w-3" />
-                        Reject
-                      </button>
-                    </div>
-                  ) : member.status === "ACTIVE" ? (
-                    <Link
-                      href="#"
-                      className="flex w-fit items-center gap-1 rounded-lg bg-teal-600/20 px-2.5 py-1 text-xs font-medium text-teal-300 transition hover:bg-teal-600/30"
-                    >
-                      <Eye className="h-3 w-3" />
-                      View
-                    </Link>
-                  ) : null}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* Table with search and filters */}
+      <MembersTable initialMembers={members} />
     </div>
   );
 }
