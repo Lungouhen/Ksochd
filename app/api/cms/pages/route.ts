@@ -1,32 +1,38 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
-  return withPrisma(async (prisma) => {
-    const { searchParams } = new URL(req.url);
-    const status = searchParams.get("status");
+  const { searchParams } = new URL(req.url);
+  const status = searchParams.get("status");
 
-    const where = status && status !== "all" ? { status: status as "DRAFT" | "PUBLISHED" | "ARCHIVED" } : {};
+  const where = status && status !== "all" ? { status: status as "DRAFT" | "PUBLISHED" | "ARCHIVED" } : {};
 
-    const pages = await prisma.page.findMany({
-      where,
-      include: {
-        seo: true,
-        theme: true,
-      },
-      orderBy: { updatedAt: "desc" },
-    });
+  const result = await withPrisma(
+    async (prisma) => {
+      const pages = await prisma.page.findMany({
+        where,
+        include: {
+          seo: true,
+          theme: true,
+        },
+        orderBy: { updatedAt: "desc" },
+      });
 
-    return NextResponse.json({ pages });
-  });
+      return { pages };
+    },
+    () => ({ pages: [] })
+  );
+
+  return NextResponse.json(result);
 }
 
 export async function POST(req: NextRequest) {
-  return withPrisma(async (prisma) => {
-    try {
-      const body = await req.json();
-      const { slug, title, content, excerpt, status, themeId, seo, createdBy } = body;
+  const body = await req.json();
+  const { slug, title, content, excerpt, status, themeId, seo, createdBy } = body;
 
+  const result = await withPrisma(
+    async (prisma) => {
       // Create SEO record if provided
       let seoId: string | undefined;
       if (seo) {
@@ -45,7 +51,7 @@ export async function POST(req: NextRequest) {
             canonicalUrl: seo.canonicalUrl,
             noindex: seo.noindex || false,
             nofollow: seo.nofollow || false,
-            structuredData: seo.structuredData ? JSON.stringify(seo.structuredData) : null,
+            structuredData: seo.structuredData ? JSON.stringify(seo.structuredData) : Prisma.JsonNull,
           },
         });
         seoId = seoRecord.id;
@@ -69,13 +75,17 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      return NextResponse.json({ page }, { status: 201 });
-    } catch (error) {
-      console.error("Error creating page:", error);
-      return NextResponse.json(
-        { error: "Failed to create page" },
-        { status: 500 }
-      );
-    }
-  });
+      return { page: page as any };
+    },
+    () => ({ page: null as any })
+  );
+
+  if (!result.page) {
+    return NextResponse.json(
+      { error: "Failed to create page" },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ page: result.page }, { status: 201 });
 }

@@ -1,7 +1,13 @@
 import Link from "next/link";
-import { Globe, Settings, Key, CreditCard, Bell, Shield, Receipt, Mail, Search } from "lucide-react";
+import { Globe, Settings, Key, CreditCard, Bell, Shield, Receipt, Mail, Search, Calendar } from "lucide-react";
 
 const settingCards = [
+  {
+    title: "Executive Terms",
+    icon: Calendar,
+    href: "/admin/settings/terms",
+    desc: "Manage term years (2025-2026, 2026-2027, etc.)",
+  },
   {
     title: "Website Settings",
     icon: Globe,

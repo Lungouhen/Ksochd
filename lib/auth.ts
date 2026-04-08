@@ -3,6 +3,7 @@ import { Role } from "@/types/domain";
 
 export type Session = {
   userId: string;
+  name?: string;
   role: Role;
   token?: string;
 };
@@ -32,6 +33,7 @@ export async function getSession(): Promise<Session> {
 
   return {
     userId: decoded.userId ?? "user-1",
+    name: decoded.name,
     role: decoded.role ?? Role.MEMBER,
     token: rawToken ?? decoded.token,
   };

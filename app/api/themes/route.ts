@@ -1,22 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
+import type { Theme } from "@prisma/client";
 
 export async function GET() {
-  return withPrisma(async (prisma) => {
-    const themes = await prisma.theme.findMany({
-      orderBy: { createdAt: "desc" },
-    });
+  const result = await withPrisma(
+    async (prisma) => {
+      const themes = await prisma.theme.findMany({
+        orderBy: { createdAt: "desc" },
+      });
 
-    return NextResponse.json({ themes });
-  });
+      return { themes };
+    },
+    () => ({ themes: [] })
+  );
+
+  return NextResponse.json(result);
 }
 
 export async function POST(req: NextRequest) {
-  return withPrisma(async (prisma) => {
-    try {
-      const body = await req.json();
-      const { name, displayName, description, config, preview, isDefault } = body;
+  const body = await req.json();
+  const { name, displayName, description, config, preview, isDefault } = body;
 
+  const result = await withPrisma(
+    async (prisma) => {
       // If setting as default, unset other defaults
       if (isDefault) {
         await prisma.theme.updateMany({
@@ -37,13 +43,17 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      return NextResponse.json({ theme }, { status: 201 });
-    } catch (error) {
-      console.error("Error creating theme:", error);
-      return NextResponse.json(
-        { error: "Failed to create theme" },
-        { status: 500 }
-      );
-    }
-  });
+      return { theme: theme as Theme | null };
+    },
+    () => ({ theme: null as Theme | null })
+  );
+
+  if (!result.theme) {
+    return NextResponse.json(
+      { error: "Failed to create theme" },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ theme: result.theme }, { status: 201 });
 }
