@@ -12,8 +12,8 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const limit = parseInt(searchParams.get("limit") || "50");
-  const offset = parseInt(searchParams.get("offset") || "0");
+  const limit = Math.min(Math.max(parseInt(searchParams.get("limit") || "50"), 1), 100); // Clamp between 1-100
+  const offset = Math.max(parseInt(searchParams.get("offset") || "0"), 0); // Minimum 0
 
   const result = await withPrisma(
     async (client) => {
@@ -26,9 +26,9 @@ export async function GET(request: NextRequest) {
         client.auditLog.count(),
       ]);
 
-      return { logs, total };
+      return { logs, total, limit, offset };
     },
-    () => ({ logs: [], total: 0 }),
+    () => ({ logs: [], total: 0, limit, offset }),
   );
 
   return NextResponse.json(result);

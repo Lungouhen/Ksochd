@@ -15,6 +15,14 @@ export async function PATCH(
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
+  // Prevent admins from changing their own role
+  if (session.userId === id) {
+    return NextResponse.json(
+      { error: "Cannot change your own role" },
+      { status: 400 }
+    );
+  }
+
   const body = await request.json();
   const { role } = body as { role: Role };
 
@@ -38,6 +46,18 @@ export async function PATCH(
       }
 
       const oldRole = targetUser.role;
+
+      // Skip if role is already the same
+      if (oldRole === role) {
+        return {
+          success: true,
+          user: {
+            id: targetUser.id,
+            name: targetUser.name,
+            role: targetUser.role,
+          },
+        };
+      }
 
       // Update the role
       const updatedUser = await client.user.update({

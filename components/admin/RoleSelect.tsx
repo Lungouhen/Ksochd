@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Role } from "@/types/domain";
 import { Crown, Shield, User as UserIcon } from "lucide-react";
 import { toast } from "sonner";
@@ -33,6 +34,7 @@ const roleConfig = {
 };
 
 export function RoleSelect({ userId, currentRole, onRoleChange }: RoleSelectProps) {
+  const router = useRouter();
   const [isChanging, setIsChanging] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role>(currentRole);
   const [showConfirm, setShowConfirm] = useState(false);
@@ -64,12 +66,16 @@ export function RoleSelect({ userId, currentRole, onRoleChange }: RoleSelectProp
       setSelectedRole(pendingRole);
       toast.success(`Role updated to ${roleConfig[pendingRole].label}`);
       onRoleChange?.(pendingRole);
+
+      // Refresh the page data to reflect the change
+      router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Failed to update role");
+      // Reset to current role on error
+      setPendingRole(null);
     } finally {
       setIsChanging(false);
       setShowConfirm(false);
-      setPendingRole(null);
     }
   };
 
@@ -85,6 +91,8 @@ export function RoleSelect({ userId, currentRole, onRoleChange }: RoleSelectProp
               key={role}
               onClick={() => handleRoleSelect(role as Role)}
               disabled={isChanging}
+              aria-label={`Set role to ${config.label}`}
+              aria-pressed={isSelected}
               className={`flex flex-col items-center gap-2 rounded-lg border p-4 transition ${
                 isSelected
                   ? `${config.color} border-current`
@@ -104,7 +112,7 @@ export function RoleSelect({ userId, currentRole, onRoleChange }: RoleSelectProp
       </div>
 
       {showConfirm && pendingRole && (
-        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4">
+        <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-4" role="alert">
           <p className="text-sm text-amber-200 mb-3">
             Are you sure you want to change this user&apos;s role to{" "}
             <strong>{roleConfig[pendingRole].label}</strong>?
@@ -113,6 +121,7 @@ export function RoleSelect({ userId, currentRole, onRoleChange }: RoleSelectProp
             <button
               onClick={confirmRoleChange}
               disabled={isChanging}
+              aria-label="Confirm role change"
               className="rounded-lg bg-amber-600 px-4 py-2 text-sm font-medium text-white hover:bg-amber-700 transition disabled:opacity-50"
             >
               {isChanging ? "Updating..." : "Confirm"}
@@ -123,6 +132,7 @@ export function RoleSelect({ userId, currentRole, onRoleChange }: RoleSelectProp
                 setPendingRole(null);
               }}
               disabled={isChanging}
+              aria-label="Cancel role change"
               className="rounded-lg border border-white/10 px-4 py-2 text-sm font-medium text-slate-300 hover:bg-slate-800 transition disabled:opacity-50"
             >
               Cancel

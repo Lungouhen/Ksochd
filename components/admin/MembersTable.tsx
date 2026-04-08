@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   CheckCircle2,
@@ -39,6 +40,7 @@ interface MembersTableProps {
 }
 
 export function MembersTable({ initialMembers }: MembersTableProps) {
+  const router = useRouter();
   const [members, setMembers] = useState(initialMembers);
   const [searchTerm, setSearchTerm] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("ALL");
@@ -73,6 +75,9 @@ export function MembersTable({ initialMembers }: MembersTableProps) {
       toast.success(
         `Member ${action === "approve" ? "approved" : "rejected"} successfully`
       );
+
+      // Refresh server data
+      router.refresh();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : `Failed to ${action} member`);
     } finally {
@@ -103,22 +108,24 @@ export function MembersTable({ initialMembers }: MembersTableProps) {
       {/* Search and Filters */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" aria-hidden="true" />
           <input
-            type="text"
+            type="search"
             placeholder="Search by name, email, or phone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            aria-label="Search members"
             className="w-full rounded-lg border border-white/10 bg-slate-800/50 py-2 pl-10 pr-4 text-sm text-white placeholder-slate-400 focus:border-teal-500/50 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
           />
         </div>
 
         <div className="flex gap-2">
           <div className="relative">
-            <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden="true" />
             <select
               value={roleFilter}
               onChange={(e) => setRoleFilter(e.target.value)}
+              aria-label="Filter by role"
               className="appearance-none rounded-lg border border-white/10 bg-slate-800/50 py-2 pl-10 pr-8 text-sm text-white focus:border-teal-500/50 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             >
               <option value="ALL">All Roles</option>
@@ -129,10 +136,11 @@ export function MembersTable({ initialMembers }: MembersTableProps) {
           </div>
 
           <div className="relative">
-            <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400 pointer-events-none" aria-hidden="true" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
+              aria-label="Filter by status"
               className="appearance-none rounded-lg border border-white/10 bg-slate-800/50 py-2 pl-10 pr-8 text-sm text-white focus:border-teal-500/50 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             >
               <option value="ALL">All Statuses</option>
@@ -146,7 +154,7 @@ export function MembersTable({ initialMembers }: MembersTableProps) {
       </div>
 
       {/* Results count */}
-      <p className="text-sm text-slate-400">
+      <p className="text-sm text-slate-400" role="status">
         Showing {filteredMembers.length} of {members.length} members
       </p>
 
@@ -155,13 +163,13 @@ export function MembersTable({ initialMembers }: MembersTableProps) {
         <table className="min-w-full text-sm">
           <thead className="bg-white/5 text-slate-200">
             <tr>
-              <th className="px-4 py-3 text-left font-semibold">Name</th>
-              <th className="px-4 py-3 text-left font-semibold">Email</th>
-              <th className="px-4 py-3 text-left font-semibold">Phone</th>
-              <th className="px-4 py-3 text-left font-semibold">Role</th>
-              <th className="px-4 py-3 text-left font-semibold">Status</th>
-              <th className="px-4 py-3 text-left font-semibold">Joined</th>
-              <th className="px-4 py-3 text-left font-semibold">Actions</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">Name</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">Email</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">Phone</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">Role</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">Status</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">Joined</th>
+              <th scope="col" className="px-4 py-3 text-left font-semibold">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -194,26 +202,29 @@ export function MembersTable({ initialMembers }: MembersTableProps) {
                       <button
                         onClick={() => handleAction(member.id, "approve")}
                         disabled={processingIds.has(member.id)}
+                        aria-label={`Approve ${member.name}`}
                         className="flex items-center gap-1 rounded-lg bg-emerald-600/20 px-2.5 py-1 text-xs font-medium text-emerald-300 transition hover:bg-emerald-600/30 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <CheckCircle2 className="h-3 w-3" />
+                        <CheckCircle2 className="h-3 w-3" aria-hidden="true" />
                         Approve
                       </button>
                       <button
                         onClick={() => handleAction(member.id, "reject")}
                         disabled={processingIds.has(member.id)}
+                        aria-label={`Reject ${member.name}`}
                         className="flex items-center gap-1 rounded-lg bg-red-600/20 px-2.5 py-1 text-xs font-medium text-red-300 transition hover:bg-red-600/30 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        <XCircle className="h-3 w-3" />
+                        <XCircle className="h-3 w-3" aria-hidden="true" />
                         Reject
                       </button>
                     </div>
                   ) : member.status === "ACTIVE" || member.status === "REJECTED" ? (
                     <Link
                       href={`/admin/members/${member.id}`}
+                      aria-label={`View details for ${member.name}`}
                       className="flex w-fit items-center gap-1 rounded-lg bg-teal-600/20 px-2.5 py-1 text-xs font-medium text-teal-300 transition hover:bg-teal-600/30"
                     >
-                      <Eye className="h-3 w-3" />
+                      <Eye className="h-3 w-3" aria-hidden="true" />
                       View
                     </Link>
                   ) : null}
