@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 
 const routeLabels: Record<string, string> = {
   '/admin': 'Dashboard',
+  '/admin/dashboard': 'Dashboard',
   '/admin/members': 'Members',
   '/admin/events': 'Events',
   '/admin/gallery': 'Gallery',
