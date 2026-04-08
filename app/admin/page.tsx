@@ -24,7 +24,7 @@ import {
   DollarSign,
 } from "lucide-react";
 
-// Lazy load the chart component
+// Lazy load the chart component (will render on client side)
 const VisitorsChart = dynamic(
   () => import("@/components/admin/VisitorsChart").then((mod) => ({ default: mod.VisitorsChart })),
   {
@@ -37,7 +37,6 @@ const VisitorsChart = dynamic(
         <div className="h-64 animate-pulse rounded-lg bg-slate-800" />
       </div>
     ),
-    ssr: false,
   }
 );
 

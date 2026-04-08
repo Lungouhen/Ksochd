@@ -78,7 +78,7 @@ export async function getSiteSettings(): Promise<SiteSettings> {
           settingsMap.secondaryColor || defaultSettings.secondaryColor,
       };
     },
-    defaultSettings
+    () => defaultSettings
   );
 }
 
@@ -105,7 +105,7 @@ export async function updateSiteSetting(
         },
       });
     },
-    undefined
+    () => undefined
   );
 }
 
@@ -119,6 +119,6 @@ export async function getSiteSetting(
       });
       return setting?.value || defaultSettings[key];
     },
-    defaultSettings[key]
+    () => defaultSettings[key]
   );
 }
