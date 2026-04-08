@@ -23,6 +23,49 @@ export const metadata: Metadata = {
   title: "KSO Chandigarh Portal",
   description:
     "Single-stream portal for Kuki Students Organisation (Chandigarh) members, admins, and guests.",
+  applicationName: "KSO Chandigarh Portal",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "KSO Portal",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    siteName: "KSO Chandigarh Portal",
+    title: "KSO Chandigarh Portal",
+    description:
+      "Single-stream portal for Kuki Students Organisation (Chandigarh) members, admins, and guests.",
+  },
+  twitter: {
+    card: "summary",
+    title: "KSO Chandigarh Portal",
+    description:
+      "Single-stream portal for Kuki Students Organisation (Chandigarh) members, admins, and guests.",
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#0ea5a6" },
+    { media: "(prefers-color-scheme: dark)", color: "#030712" },
+  ],
+  manifest: "/manifest.json",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+    ],
+  },
 };
 
 // GTM Container ID - should be loaded from settings in production

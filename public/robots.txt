@@ -1,0 +1,21 @@
+# Robots.txt for KSO Chandigarh Portal
+
+User-agent: *
+Allow: /
+
+# Disallow admin areas from search engines
+Disallow: /admin/
+Disallow: /api/
+
+# Disallow auth pages
+Disallow: /login
+Disallow: /register
+Disallow: /otp
+
+# Allow public pages
+Allow: /
+Allow: /events
+Allow: /gallery
+
+# Sitemap
+Sitemap: https://ksochd.org/sitemap.xml
