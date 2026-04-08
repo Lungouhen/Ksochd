@@ -146,6 +146,24 @@ model SystemSetting {
   updatedBy   String?
 }
 
+model ExecutiveTerm {
+  id          String   @id @default(cuid())
+  name        String   // e.g., "2025-2026"
+  startYear   Int      // e.g., 2025
+  endYear     Int      // e.g., 2026
+  startDate   DateTime // Term start date
+  endDate     DateTime // Term end date
+  isCurrent   Boolean  @default(false) // Only one term can be current
+  description String?  // Optional description
+  createdBy   String   // Admin who created the term
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isCurrent])
+  @@index([startYear])
+  @@index([endYear])
+}
+
 // CMS Models
 model Page {
   id          String      @id @default(cuid())
