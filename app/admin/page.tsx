@@ -136,6 +136,7 @@ export default async function AdminDashboard() {
     { label: "Manage Ads", href: "/admin/ads", icon: DollarSign },
     { label: "View Payments", href: "/admin/payments", icon: CreditCard },
     { label: "Send Notification", href: "/admin/notifications", icon: Bell },
+    { label: "View Reports", href: "/admin/reports", icon: FileText },
     { label: "Settings", href: "/admin/settings", icon: Settings },
   ];
 

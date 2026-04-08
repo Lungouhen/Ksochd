@@ -55,9 +55,19 @@ export const adminNav: NavItem[] = [
     description: "Event creation, capacity, and registration oversight.",
   },
   {
+    label: "CMS Pages",
+    href: "/admin/cms/pages",
+    description: "CMS page builder with drag-and-drop blocks.",
+  },
+  {
     label: "Analytics",
     href: "/admin/analytics",
     description: "Engagement, payments, and operational dashboards.",
+  },
+  {
+    label: "Reports",
+    href: "/admin/reports",
+    description: "In-depth member, financial, event, and engagement reports.",
   },
   {
     label: "Approvals",
@@ -68,6 +78,11 @@ export const adminNav: NavItem[] = [
     label: "Payments",
     href: "/admin/payments",
     description: "Membership/event payment overview and status.",
+  },
+  {
+    label: "Settings",
+    href: "/admin/settings",
+    description: "Branding, ID formats, templates, modules, hooks, and backups.",
   },
 ];
 

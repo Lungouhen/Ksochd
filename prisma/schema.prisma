@@ -171,6 +171,8 @@ model Page {
   title       String
   content     String      @db.Text
   excerpt     String?
+  customCss   String?     @db.Text
+  customJs    String?     @db.Text
   status      PageStatus  @default(DRAFT)
   themeId     String?
   seoId       String?     @unique
@@ -183,24 +185,31 @@ model Page {
   theme       Theme?      @relation(fields: [themeId], references: [id])
   seo         SEO?        @relation(fields: [seoId], references: [id])
   blocks      PageBlock[]
+  versions    PageVersion[]
 
   @@index([slug])
   @@index([status])
 }
 
 model PageBlock {
-  id        String    @id @default(cuid())
-  pageId    String
-  type      BlockType
-  content   String    @db.Text
-  settings  Json?     // JSON for block-specific settings
-  order     Int       @default(0)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  pageId          String?
+  type            BlockType
+  content         String    @db.Text
+  settings        Json?
+  order           Int       @default(0)
+  isReusable      Boolean   @default(false)
+  reusableName    String?
+  isGlobal        Boolean   @default(false)
+  sourceBlockId   String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
-  page      Page      @relation(fields: [pageId], references: [id], onDelete: Cascade)
+  page            Page?     @relation(fields: [pageId], references: [id], onDelete: Cascade)
 
   @@index([pageId])
+  @@index([isReusable])
+  @@index([isGlobal])
 }
 
 model MediaLibrary {
@@ -311,6 +320,26 @@ enum BlockType {
   BUTTON
   FORM
   CUSTOM_HTML
+  HERO
+  FEATURE_GRID
+  TESTIMONIAL
+  PRICING_TABLE
+  FAQ_ACCORDION
+  CTA_BANNER
+  STATS_COUNTER
+  TEAM_GRID
+  TIMELINE
+  MAP_EMBED
+  SOCIAL_FEED
+  NEWSLETTER_FORM
+  TABS
+  ACCORDION
+  CAROUSEL
+  TABLE
+  ALERT
+  SPACER
+  ICON_LIST
+  LOGO_GRID
 }
 
 enum MediaType {
@@ -337,4 +366,210 @@ enum AdPosition {
   CONTENT_MIDDLE
   CONTENT_BOTTOM
   POPUP
+}
+
+// ─── Branding & Organization Config ─────────────────────────────────────
+
+model BrandingConfig {
+  id              String   @id @default(cuid())
+  key             String   @unique  // e.g., "logo_url", "primary_color", "font_family"
+  value           String?  @db.Text
+  category        String   @default("general") // "logo", "colors", "typography", "layout"
+  description     String?
+  updatedAt       DateTime @updatedAt
+  updatedBy       String?
+
+  @@index([category])
+}
+
+// ─── Configurable ID Formats ────────────────────────────────────────────
+
+model IdFormatConfig {
+  id              String   @id @default(cuid())
+  entityType      String   @unique // "member", "receipt", "invoice", "event", "payment"
+  prefix          String   @default("") // e.g., "KSO-", "REC-", "INV-"
+  separator       String   @default("-") // separator between prefix and number
+  padLength       Int      @default(6) // zero-pad length
+  nextSequence    Int      @default(1) // auto-increment counter
+  format          String   @default("{{prefix}}{{separator}}{{sequence}}") // format template
+  suffix          String?  // optional suffix
+  includeYear     Boolean  @default(false) // include year in ID
+  includeMonth    Boolean  @default(false) // include month in ID
+  description     String?
+  updatedAt       DateTime @updatedAt
+  updatedBy       String?
+
+  @@index([entityType])
+}
+
+// ─── Output Templates ───────────────────────────────────────────────────
+
+model OutputTemplate {
+  id              String   @id @default(cuid())
+  name            String
+  type            String   // "id_card", "receipt", "invoice", "report", "certificate"
+  layout          String   @db.Text // HTML/CSS template with {{placeholders}}
+  placeholders    Json?    // list of available placeholders and descriptions
+  isDefault       Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  description     String?
+  previewImage    String?
+  createdBy       String
+  updatedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@index([type])
+  @@index([isActive])
+}
+
+// ─── Custom Fields ──────────────────────────────────────────────────────
+
+model CustomField {
+  id              String   @id @default(cuid())
+  module          String   // "members", "events", "payments", "content"
+  fieldName       String   // machine-readable key
+  label           String   // human-readable label
+  fieldType       FieldType
+  placeholder     String?
+  defaultValue    String?
+  options         Json?    // for select/radio/checkbox: array of options
+  validationRules Json?    // min, max, regex, required, etc.
+  order           Int      @default(0)
+  isRequired      Boolean  @default(false)
+  isActive        Boolean  @default(true)
+  description     String?
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  values          CustomFieldValue[]
+
+  @@unique([module, fieldName])
+  @@index([module])
+  @@index([isActive])
+}
+
+model CustomFieldValue {
+  id              String   @id @default(cuid())
+  fieldId         String
+  entityId        String   // ID of the member/event/payment this value belongs to
+  value           String?  @db.Text
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  field           CustomField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  @@unique([fieldId, entityId])
+  @@index([entityId])
+}
+
+enum FieldType {
+  TEXT
+  TEXTAREA
+  NUMBER
+  EMAIL
+  PHONE
+  DATE
+  DATETIME
+  SELECT
+  MULTI_SELECT
+  RADIO
+  CHECKBOX
+  FILE
+  URL
+  COLOR
+  RICH_TEXT
+}
+
+// ─── Module Toggles ─────────────────────────────────────────────────────
+
+model ModuleToggle {
+  id              String   @id @default(cuid())
+  moduleKey       String   @unique // "events", "payments", "gallery", "cms", "ads", "reports", etc.
+  displayName     String
+  description     String?
+  isEnabled       Boolean  @default(true)
+  permissions     Json?    // role-based permissions for this module
+  config          Json?    // module-specific configuration
+  order           Int      @default(0)
+  updatedAt       DateTime @updatedAt
+  updatedBy       String?
+
+  @@index([isEnabled])
+}
+
+// ─── Saved Report Views ─────────────────────────────────────────────────
+
+model SavedReportView {
+  id              String   @id @default(cuid())
+  name            String
+  reportType      String   // "members", "financial", "events", "engagement"
+  filters         Json     // saved filter configuration
+  columns         Json?    // visible columns and order
+  sortConfig      Json?    // sort column and direction
+  exportFormat    String?  // "csv", "pdf", "xlsx"
+  isDefault       Boolean  @default(false)
+  isShared        Boolean  @default(false)
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([reportType])
+  @@index([createdBy])
+}
+
+// ─── Page Versioning ────────────────────────────────────────────────────
+
+model PageVersion {
+  id              String   @id @default(cuid())
+  pageId          String
+  versionNumber   Int
+  title           String
+  content         String   @db.Text
+  customCss       String?  @db.Text
+  customJs        String?  @db.Text
+  blocks          Json?    // snapshot of blocks at this version
+  status          PageStatus
+  changeNote      String?
+  createdBy       String
+  createdAt       DateTime @default(now())
+
+  page            Page     @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, versionNumber])
+  @@index([pageId])
+}
+
+// ─── Settings Versioning ────────────────────────────────────────────────
+
+model SettingsBackup {
+  id              String   @id @default(cuid())
+  name            String
+  category        String   // "branding", "id_formats", "templates", "modules", "all"
+  data            Json     // snapshot of settings
+  description     String?
+  createdBy       String
+  createdAt       DateTime @default(now())
+
+  @@index([category])
+}
+
+// ─── Hook/Extension System ──────────────────────────────────────────────
+
+model HookRegistration {
+  id              String   @id @default(cuid())
+  hookPoint       String   // "before_member_create", "after_payment_success", etc.
+  name            String
+  description     String?
+  handlerType     String   // "webhook", "internal", "script"
+  handlerConfig   Json     // URL for webhook, function path for internal, script content
+  priority        Int      @default(10)
+  isActive        Boolean  @default(true)
+  conditions      Json?    // optional conditions for when to trigger
+  createdBy       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([hookPoint])
+  @@index([isActive])
 }

@@ -10,6 +10,7 @@ export {
   MediaType,
   AdType,
   AdPosition,
+  FieldType,
 } from "@prisma/client";
 
 import type { Role, Status } from "@prisma/client";
