@@ -131,6 +131,9 @@ enum PaymentGateway {
   RAZORPAY
   STRIPE
   PAYPAL
+  PAYTM
+  PHONEPE
+  CCAVENUE
 }
 
 model SystemSetting {

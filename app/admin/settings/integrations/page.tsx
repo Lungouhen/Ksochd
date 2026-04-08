@@ -17,13 +17,25 @@ const defaultSettings: Setting[] = [
   { key: "SUPABASE_SERVICE_ROLE_KEY", value: "", isSecret: true, description: "Service Role Key (for admin actions)" },
   { key: "RAZORPAY_KEY_ID", value: "", isSecret: false, description: "Razorpay Key ID" },
   { key: "RAZORPAY_KEY_SECRET", value: "", isSecret: true, description: "Razorpay Secret Key" },
+  { key: "PAYTM_MERCHANT_ID", value: "", isSecret: false, description: "Paytm Merchant ID" },
+  { key: "PAYTM_MERCHANT_KEY", value: "", isSecret: true, description: "Paytm Merchant Key" },
+  { key: "PAYTM_WEBSITE", value: "DEFAULT", isSecret: false, description: "Paytm Website Name" },
+  { key: "PAYTM_ENVIRONMENT", value: "staging", isSecret: false, description: "Paytm Environment (staging/production)" },
+  { key: "PHONEPE_MERCHANT_ID", value: "", isSecret: false, description: "PhonePe Merchant ID" },
+  { key: "PHONEPE_SALT_KEY", value: "", isSecret: true, description: "PhonePe Salt Key" },
+  { key: "PHONEPE_SALT_INDEX", value: "1", isSecret: false, description: "PhonePe Salt Index" },
+  { key: "PHONEPE_ENVIRONMENT", value: "staging", isSecret: false, description: "PhonePe Environment (staging/production)" },
+  { key: "CCAVENUE_MERCHANT_ID", value: "", isSecret: false, description: "CCAvenue Merchant ID" },
+  { key: "CCAVENUE_ACCESS_CODE", value: "", isSecret: true, description: "CCAvenue Access Code" },
+  { key: "CCAVENUE_WORKING_KEY", value: "", isSecret: true, description: "CCAvenue Working Key" },
+  { key: "CCAVENUE_ENVIRONMENT", value: "test", isSecret: false, description: "CCAvenue Environment (test/production)" },
   { key: "STRIPE_PUBLIC_KEY", value: "", isSecret: false, description: "Stripe Publishable Key" },
   { key: "STRIPE_SECRET_KEY", value: "", isSecret: true, description: "Stripe Secret Key" },
   { key: "STRIPE_WEBHOOK_SECRET", value: "", isSecret: true, description: "Stripe Webhook Secret" },
   { key: "PAYPAL_CLIENT_ID", value: "", isSecret: false, description: "PayPal Client ID" },
   { key: "PAYPAL_CLIENT_SECRET", value: "", isSecret: true, description: "PayPal Secret Key" },
   { key: "PAYPAL_MODE", value: "sandbox", isSecret: false, description: "PayPal Mode (sandbox/live)" },
-  { key: "ACTIVE_PAYMENT_GATEWAY", value: "RAZORPAY", isSecret: false, description: "Active Payment Gateway (RAZORPAY/STRIPE/PAYPAL)" },
+  { key: "ACTIVE_PAYMENT_GATEWAY", value: "RAZORPAY", isSecret: false, description: "Active Payment Gateway (RAZORPAY/PAYTM/PHONEPE/CCAVENUE/STRIPE/PAYPAL)" },
   { key: "RECAPTCHA_SITE_KEY", value: "", isSecret: false, description: "Google reCAPTCHA v3 Site Key" },
   { key: "RECAPTCHA_SECRET_KEY", value: "", isSecret: true, description: "reCAPTCHA Secret Key" },
   { key: "RESEND_API_KEY", value: "", isSecret: true, description: "Resend Email API Key" },
@@ -85,7 +97,7 @@ export default function IntegrationsSettings() {
           </p>
           <h1 className="text-2xl font-semibold text-white">Integrations</h1>
           <p className="text-sm text-slate-300">
-            Configure Supabase, payment gateways (Razorpay, Stripe, PayPal), reCAPTCHA, Resend, and other services.
+            Configure Supabase and payment gateways (Indian: Razorpay, Paytm, PhonePe, CCAvenue | International: Stripe, PayPal).
           </p>
         </div>
         <button

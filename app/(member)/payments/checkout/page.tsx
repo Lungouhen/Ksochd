@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Shield, Lock, CreditCard, Loader2, ArrowLeft } from "lucide-react";
 
-type PaymentGateway = "RAZORPAY" | "STRIPE" | "PAYPAL";
+type PaymentGateway = "RAZORPAY" | "STRIPE" | "PAYPAL" | "PAYTM" | "PHONEPE" | "CCAVENUE";
 
 export default function PaymentCheckoutPage() {
   const searchParams = useSearchParams();
@@ -73,6 +73,9 @@ export default function PaymentCheckoutPage() {
     RAZORPAY: "Razorpay",
     STRIPE: "Stripe",
     PAYPAL: "PayPal",
+    PAYTM: "Paytm",
+    PHONEPE: "PhonePe",
+    CCAVENUE: "CCAvenue",
   };
 
   return (

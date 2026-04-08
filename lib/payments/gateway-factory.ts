@@ -3,6 +3,9 @@ import type { IPaymentGateway } from "./gateway-interface";
 import { RazorpayGateway } from "./razorpay-gateway";
 import { StripeGateway } from "./stripe-gateway";
 import { PayPalGateway } from "./paypal-gateway";
+import { PaytmGateway } from "./paytm-gateway";
+import { PhonePeGateway } from "./phonepe-gateway";
+import { CCAvenueGateway } from "./ccavenue-gateway";
 
 const gatewayInstances = new Map<PaymentGateway, IPaymentGateway>();
 
@@ -29,6 +32,15 @@ export function getPaymentGateway(
       break;
     case PaymentGateway.PAYPAL:
       instance = new PayPalGateway();
+      break;
+    case PaymentGateway.PAYTM:
+      instance = new PaytmGateway();
+      break;
+    case PaymentGateway.PHONEPE:
+      instance = new PhonePeGateway();
+      break;
+    case PaymentGateway.CCAVENUE:
+      instance = new CCAvenueGateway();
       break;
     default:
       return null;
@@ -84,6 +96,25 @@ export function getAvailableGateways(): PaymentGateway[] {
   // Check PayPal
   if (process.env.PAYPAL_CLIENT_ID && process.env.PAYPAL_CLIENT_SECRET) {
     available.push(PaymentGateway.PAYPAL);
+  }
+
+  // Check Paytm
+  if (process.env.PAYTM_MERCHANT_ID && process.env.PAYTM_MERCHANT_KEY) {
+    available.push(PaymentGateway.PAYTM);
+  }
+
+  // Check PhonePe
+  if (process.env.PHONEPE_MERCHANT_ID && process.env.PHONEPE_SALT_KEY) {
+    available.push(PaymentGateway.PHONEPE);
+  }
+
+  // Check CCAvenue
+  if (
+    process.env.CCAVENUE_MERCHANT_ID &&
+    process.env.CCAVENUE_ACCESS_CODE &&
+    process.env.CCAVENUE_WORKING_KEY
+  ) {
+    available.push(PaymentGateway.CCAVENUE);
   }
 
   return available;
