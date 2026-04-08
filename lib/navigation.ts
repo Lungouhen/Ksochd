@@ -60,6 +60,11 @@ export const adminNav: NavItem[] = [
     description: "Engagement, payments, and operational dashboards.",
   },
   {
+    label: "Reports",
+    href: "/admin/reports",
+    description: "In-depth member, financial, event, and engagement reports.",
+  },
+  {
     label: "Approvals",
     href: "/admin/approvals",
     description: "Membership approvals and moderation queue.",

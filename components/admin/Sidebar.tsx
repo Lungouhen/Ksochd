@@ -15,6 +15,7 @@ import {
   Palette,
   DollarSign,
   BarChart3,
+  ClipboardList,
 } from 'lucide-react';
 import { useSidebar } from './sidebar-context';
 
@@ -28,6 +29,7 @@ const menuItems = [
   { icon: DollarSign, label: 'Ads', href: '/admin/ads' },
   { icon: CreditCard, label: 'Payments', href: '/admin/payments' },
   { icon: BarChart3, label: 'Analytics', href: '/admin/analytics' },
+  { icon: ClipboardList, label: 'Reports', href: '/admin/reports' },
   { icon: Bell, label: 'Notifications', href: '/admin/notifications' },
   { icon: Settings, label: 'Settings', href: '/admin/settings' },
 ];
