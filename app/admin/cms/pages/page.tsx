@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FileText, Plus, Search, Eye, Pencil, Trash2, Globe } from "lucide-react";
+import { FileText, Plus, Search, Pencil, Trash2, Globe } from "lucide-react";
 import { toast } from "sonner";
 
 type Page = {

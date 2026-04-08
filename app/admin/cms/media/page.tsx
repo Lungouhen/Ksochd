@@ -206,6 +206,7 @@ export default function MediaLibraryPage() {
               {/* Preview */}
               <div className="aspect-video w-full bg-slate-800 flex items-center justify-center">
                 {item.type === "IMAGE" ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={item.url}
                     alt={item.alt || item.filename}

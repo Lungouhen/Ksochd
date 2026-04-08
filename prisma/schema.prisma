@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -161,7 +160,7 @@ model PageBlock {
   pageId    String
   type      BlockType
   content   String    @db.Text
-  settings  String?   @db.Json // JSON for block-specific settings
+  settings  Json?     // JSON for block-specific settings
   order     Int       @default(0)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -202,7 +201,7 @@ model SEO {
   canonicalUrl     String?
   noindex          Boolean  @default(false)
   nofollow         Boolean  @default(false)
-  structuredData   String?  @db.Json
+  structuredData   Json?
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
@@ -217,7 +216,7 @@ model Theme {
   description String?
   isActive    Boolean     @default(false)
   isDefault   Boolean     @default(false)
-  config      String      @db.Json // JSON for theme configuration
+  config      Json        // JSON for theme configuration
   preview     String?     // Preview image URL
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -256,7 +255,7 @@ model GTMConfig {
   containerId   String   // GTM container ID (e.g., GTM-XXXXXX)
   isEnabled     Boolean  @default(true)
   environment   String?  // For GTM environment variables
-  customEvents  String?  @db.Json // Custom event configurations
+  customEvents  Json?    // Custom event configurations
   updatedAt     DateTime @updatedAt
   updatedBy     String?
 }

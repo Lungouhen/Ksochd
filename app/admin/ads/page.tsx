@@ -236,6 +236,7 @@ export default function AdsPage() {
               {/* Preview */}
               {ad.imageUrl && (
                 <div className="h-16 w-24 shrink-0 overflow-hidden rounded-lg bg-slate-800">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={ad.imageUrl}
                     alt={ad.name}

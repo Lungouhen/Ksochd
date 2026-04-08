@@ -134,6 +134,7 @@ export default function ThemesPage() {
               {/* Preview */}
               <div className="aspect-video w-full bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
                 {theme.preview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={theme.preview}
                     alt={theme.displayName}
