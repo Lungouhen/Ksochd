@@ -2,46 +2,60 @@ import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
 
 export async function GET(req: NextRequest) {
-  return withPrisma(async (prisma) => {
-    const { searchParams } = new URL(req.url);
-    const type = searchParams.get("type");
+  const { searchParams } = new URL(req.url);
+  const type = searchParams.get("type");
 
-    const where = type && type !== "all" ? { type: type as "IMAGE" | "VIDEO" | "DOCUMENT" | "AUDIO" } : {};
+  const where = type && type !== "all" ? { type: type as "IMAGE" | "VIDEO" | "DOCUMENT" | "AUDIO" } : {};
 
-    const media = await prisma.mediaLibrary.findMany({
-      where,
-      orderBy: { createdAt: "desc" },
-    });
+  const result = await withPrisma(
+    async (prisma) => {
+      const media = await prisma.mediaLibrary.findMany({
+        where,
+        orderBy: { createdAt: "desc" },
+      });
 
-    return NextResponse.json({ media });
-  });
+      return { media };
+    },
+    () => ({ media: [] })
+  );
+
+  return NextResponse.json(result);
 }
 
 export async function POST(req: NextRequest) {
-  return withPrisma(async (prisma) => {
-    try {
-      const body = await req.json();
-      const { filename, url, type, size, alt, caption, uploadedBy } = body;
+  const body = await req.json();
+  const { filename, url, type, size, alt, caption, uploadedBy } = body;
 
-      const media = await prisma.mediaLibrary.create({
-        data: {
-          filename,
-          url,
-          type,
-          size,
-          alt,
-          caption,
-          uploadedBy,
-        },
-      });
+  const result = await withPrisma(
+    async (prisma) => {
+      try {
+        const media = await prisma.mediaLibrary.create({
+          data: {
+            filename,
+            url,
+            type,
+            size,
+            alt,
+            caption,
+            uploadedBy,
+          },
+        });
 
-      return NextResponse.json({ media }, { status: 201 });
-    } catch (error) {
-      console.error("Error creating media:", error);
-      return NextResponse.json(
-        { error: "Failed to create media" },
-        { status: 500 }
-      );
-    }
-  });
+        return { success: true, media };
+      } catch (error) {
+        console.error("Error creating media:", error);
+        return { success: false, error: "Failed to create media" };
+      }
+    },
+    () => ({ success: false, error: "Database unavailable" })
+  );
+
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ media: result.media }, { status: 201 });
 }

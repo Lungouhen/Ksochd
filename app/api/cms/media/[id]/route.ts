@@ -5,21 +5,30 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  return withPrisma(async (prisma) => {
-    try {
-      const { id } = await params;
+  const { id } = await params;
 
-      await prisma.mediaLibrary.delete({
-        where: { id },
-      });
+  const result = await withPrisma(
+    async (prisma) => {
+      try {
+        await prisma.mediaLibrary.delete({
+          where: { id },
+        });
 
-      return NextResponse.json({ success: true });
-    } catch (error) {
-      console.error("Error deleting media:", error);
-      return NextResponse.json(
-        { error: "Failed to delete media" },
-        { status: 500 }
-      );
-    }
-  });
+        return { success: true };
+      } catch (error) {
+        console.error("Error deleting media:", error);
+        return { success: false, error: "Failed to delete media" };
+      }
+    },
+    () => ({ success: false, error: "Database unavailable" })
+  );
+
+  if (!result.success) {
+    return NextResponse.json(
+      { error: result.error },
+      { status: 500 }
+    );
+  }
+
+  return NextResponse.json({ success: true });
 }

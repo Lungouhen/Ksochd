@@ -93,16 +93,16 @@ export default async function SecurityRolesPage() {
       });
       return logs.map((log) => ({
         action: getActionLabel(log.action),
-        details: log.details as Record<string, string>,
+        details: log.details as Record<string, string | undefined>,
         user: log.targetUserName || "Unknown",
         by: log.performedByName || "Unknown Admin",
         time: getTimeAgo(log.createdAt),
       }));
     },
     () => [
-      { action: "Role changed to MODERATOR", details: {}, user: "Mangkhosei Zou", by: "Chinglen Vaiphei", time: "2 hours ago" },
-      { action: "Member approved", details: {}, user: "Thangsei Kipgen", by: "Chinglen Vaiphei", time: "4 hours ago" },
-      { action: "Member rejected", details: {}, user: "Lhingneithang Mate", by: "Vungtin Guite", time: "1 day ago" },
+      { action: "Role changed to MODERATOR", details: {} as Record<string, string | undefined>, user: "Mangkhosei Zou", by: "Chinglen Vaiphei", time: "2 hours ago" },
+      { action: "Member approved", details: {} as Record<string, string | undefined>, user: "Thangsei Kipgen", by: "Chinglen Vaiphei", time: "4 hours ago" },
+      { action: "Member rejected", details: {} as Record<string, string | undefined>, user: "Lhingneithang Mate", by: "Vungtin Guite", time: "1 day ago" },
     ],
   );
 
