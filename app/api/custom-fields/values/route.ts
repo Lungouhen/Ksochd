@@ -7,17 +7,17 @@ import {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const module = searchParams.get("module");
+    const moduleName = searchParams.get("module");
     const entityId = searchParams.get("entityId");
 
-    if (!module || !entityId) {
+    if (!moduleName || !entityId) {
       return NextResponse.json(
         { error: "module and entityId query params are required" },
         { status: 400 },
       );
     }
 
-    const values = await getCustomFieldValues(module, entityId);
+    const values = await getCustomFieldValues(moduleName, entityId);
     return NextResponse.json(values);
   } catch {
     return NextResponse.json(

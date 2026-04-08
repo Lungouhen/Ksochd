@@ -27,10 +27,15 @@ export default function BackupsPage() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    loadBackups();
+    const url = filter
+      ? `/api/settings-backups?category=${filter}`
+      : "/api/settings-backups";
+    fetch(url)
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setBackups);
   }, [filter]);
 
-  async function loadBackups() {
+  async function refreshBackups() {
     const url = filter
       ? `/api/settings-backups?category=${filter}`
       : "/api/settings-backups";
@@ -68,7 +73,7 @@ export default function BackupsPage() {
     if (res.ok) {
       setCreating(false);
       setNewBackup({ name: "", category: "all", description: "" });
-      loadBackups();
+      refreshBackups();
       setMessage("Backup created successfully.");
     }
   }

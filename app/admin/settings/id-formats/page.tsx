@@ -28,15 +28,13 @@ export default function IdFormatsPage() {
       .then((r) => r.json())
       .then((data: IdFormat[]) => {
         setFormats(data);
-        data.forEach((f) => loadPreview(f.entityType));
+        data.forEach((f) => {
+          fetch(`/api/id-formats/preview?entityType=${f.entityType}`)
+            .then((r2) => r2.json())
+            .then((d) => setPreviews((p) => ({ ...p, [f.entityType]: d.preview })));
+        });
       });
   }, []);
-
-  async function loadPreview(entityType: string) {
-    const res = await fetch(`/api/id-formats/preview?entityType=${entityType}`);
-    const data = await res.json();
-    setPreviews((p) => ({ ...p, [entityType]: data.preview }));
-  }
 
   function updateFormat(entityType: string, key: string, value: unknown) {
     setFormats((prev) =>

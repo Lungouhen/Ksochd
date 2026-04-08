@@ -9,15 +9,15 @@ import {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const module = searchParams.get("module");
-    if (!module) {
+    const moduleName = searchParams.get("module");
+    if (!moduleName) {
       return NextResponse.json(
         { error: "module query param is required" },
         { status: 400 },
       );
     }
     const activeOnly = searchParams.get("activeOnly") !== "false";
-    const fields = await getCustomFields(module, activeOnly);
+    const fields = await getCustomFields(moduleName, activeOnly);
     return NextResponse.json(fields);
   } catch {
     return NextResponse.json(

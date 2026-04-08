@@ -42,10 +42,12 @@ export default function CustomFieldsPage() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    loadFields();
+    fetch(`/api/custom-fields?module=${activeModule}&activeOnly=false`)
+      .then((res) => res.json())
+      .then(setFields);
   }, [activeModule]);
 
-  async function loadFields() {
+  async function refreshFields() {
     const res = await fetch(`/api/custom-fields?module=${activeModule}&activeOnly=false`);
     setFields(await res.json());
   }
@@ -71,7 +73,7 @@ export default function CustomFieldsPage() {
     if (res.ok) {
       setCreating(false);
       setNewField({ fieldName: "", label: "", fieldType: "TEXT", placeholder: "", defaultValue: "", options: "", isRequired: false, description: "" });
-      loadFields();
+      refreshFields();
       setMessage("Custom field created.");
     }
   }
@@ -82,13 +84,13 @@ export default function CustomFieldsPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isActive }),
     });
-    loadFields();
+    refreshFields();
   }
 
   async function deleteField(id: string) {
     if (!confirm("Delete this custom field and all its values?")) return;
     await fetch(`/api/custom-fields/${id}`, { method: "DELETE" });
-    loadFields();
+    refreshFields();
   }
 
   return (

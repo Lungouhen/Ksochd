@@ -20,13 +20,10 @@ export default function ModuleTogglesPage() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    loadModules();
+    fetch("/api/module-toggles")
+      .then((res) => (res.ok ? res.json() : []))
+      .then(setModules);
   }, []);
-
-  async function loadModules() {
-    const res = await fetch("/api/module-toggles");
-    if (res.ok) setModules(await res.json());
-  }
 
   async function handleToggle(moduleKey: string, isEnabled: boolean) {
     setMessage("");

@@ -32,10 +32,12 @@ export default function TemplatesPage() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    loadTemplates();
+    fetch("/api/templates")
+      .then((res) => res.json())
+      .then(setTemplates);
   }, []);
 
-  async function loadTemplates() {
+  async function refreshTemplates() {
     const res = await fetch("/api/templates");
     setTemplates(await res.json());
   }
@@ -100,7 +102,7 @@ export default function TemplatesPage() {
     });
     if (res.ok) {
       setMessage("Set as default.");
-      loadTemplates();
+      refreshTemplates();
     }
   }
 
@@ -114,7 +116,7 @@ export default function TemplatesPage() {
     if (res.ok) {
       setCreating(false);
       setNewTemplate({ name: "", type: "receipt", layout: "", description: "" });
-      loadTemplates();
+      refreshTemplates();
       setMessage("Template created.");
     }
   }

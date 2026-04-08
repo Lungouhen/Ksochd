@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
-import { Role } from "@/types/domain";
 import {
   getSavedReportViews,
   createSavedReportView,

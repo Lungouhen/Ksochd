@@ -38,10 +38,15 @@ export default function HooksPage() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    loadHooks();
+    fetch("/api/hooks")
+      .then((res) => res.json())
+      .then((data) => {
+        setHooks(data.hooks || []);
+        setHookPoints(data.availableHookPoints || []);
+      });
   }, []);
 
-  async function loadHooks() {
+  async function refreshHooks() {
     const res = await fetch("/api/hooks");
     const data = await res.json();
     setHooks(data.hooks || []);
@@ -66,7 +71,7 @@ export default function HooksPage() {
     if (res.ok) {
       setCreating(false);
       setNewHook({ hookPoint: "", name: "", description: "", handlerType: "webhook", url: "", priority: 10 });
-      loadHooks();
+      refreshHooks();
       setMessage("Hook registered.");
     }
   }
@@ -77,13 +82,13 @@ export default function HooksPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ isActive }),
     });
-    loadHooks();
+    refreshHooks();
   }
 
   async function deleteHook(id: string) {
     if (!confirm("Delete this hook registration?")) return;
     await fetch(`/api/hooks/${id}`, { method: "DELETE" });
-    loadHooks();
+    refreshHooks();
   }
 
   // Group hooks by hook point
