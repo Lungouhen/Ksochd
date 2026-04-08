@@ -21,6 +21,7 @@ const defaultSettings: Setting[] = [
   { key: "RECAPTCHA_SECRET_KEY", value: "", isSecret: true, description: "reCAPTCHA Secret Key" },
   { key: "RESEND_API_KEY", value: "", isSecret: true, description: "Resend Email API Key" },
   { key: "GOOGLE_MAPS_API_KEY", value: "", isSecret: false, description: "Google Maps API Key (for event venues)" },
+  { key: "AI_GATEWAY_API_KEY", value: "", isSecret: true, description: "AI Gateway API Key for AI services" },
 ];
 
 export default function IntegrationsSettings() {
@@ -78,7 +79,7 @@ export default function IntegrationsSettings() {
           </p>
           <h1 className="text-2xl font-semibold text-white">Integrations</h1>
           <p className="text-sm text-slate-300">
-            Configure Supabase, Razorpay, reCAPTCHA, Resend, and other services.
+            Configure Supabase, Razorpay, reCAPTCHA, Resend, AI Gateway, and other services.
           </p>
         </div>
         <button
