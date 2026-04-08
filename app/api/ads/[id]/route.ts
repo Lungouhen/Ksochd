@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
+import type { Ad } from "@prisma/client";
 
 export async function PATCH(
   req: NextRequest,
@@ -10,24 +11,19 @@ export async function PATCH(
 
   const result = await withPrisma(
     async (prisma) => {
-      try {
-        const ad = await prisma.ad.update({
-          where: { id },
-          data: body,
-        });
+      const ad = await prisma.ad.update({
+        where: { id },
+        data: body,
+      });
 
-        return { success: true, ad };
-      } catch (error) {
-        console.error("Error updating ad:", error);
-        return { success: false, error: "Failed to update ad" };
-      }
+      return { ad: ad as Ad | null };
     },
-    () => ({ success: false, error: "Database unavailable" })
+    () => ({ ad: null as Ad | null })
   );
 
-  if (!result.success) {
+  if (!result.ad) {
     return NextResponse.json(
-      { error: result.error },
+      { error: "Failed to update ad" },
       { status: 500 }
     );
   }
@@ -43,23 +39,18 @@ export async function DELETE(
 
   const result = await withPrisma(
     async (prisma) => {
-      try {
-        await prisma.ad.delete({
-          where: { id },
-        });
+      await prisma.ad.delete({
+        where: { id },
+      });
 
-        return { success: true };
-      } catch (error) {
-        console.error("Error deleting ad:", error);
-        return { success: false, error: "Failed to delete ad" };
-      }
+      return { success: true };
     },
-    () => ({ success: false, error: "Database unavailable" })
+    () => ({ success: false })
   );
 
   if (!result.success) {
     return NextResponse.json(
-      { error: result.error },
+      { error: "Failed to delete ad" },
       { status: 500 }
     );
   }

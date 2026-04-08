@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
+import type { Ad } from "@prisma/client";
 
 export async function POST(
   req: NextRequest,
@@ -9,28 +10,23 @@ export async function POST(
 
   const result = await withPrisma(
     async (prisma) => {
-      try {
-        const ad = await prisma.ad.update({
-          where: { id },
-          data: {
-            impressions: {
-              increment: 1,
-            },
+      const ad = await prisma.ad.update({
+        where: { id },
+        data: {
+          impressions: {
+            increment: 1,
           },
-        });
+        },
+      });
 
-        return { success: true, ad };
-      } catch (error) {
-        console.error("Error tracking impression:", error);
-        return { success: false, error: "Failed to track impression" };
-      }
+      return { ad: ad as Ad | null };
     },
-    () => ({ success: false, error: "Database unavailable" })
+    () => ({ ad: null as Ad | null })
   );
 
-  if (!result.success) {
+  if (!result.ad) {
     return NextResponse.json(
-      { error: result.error },
+      { error: "Failed to track impression" },
       { status: 500 }
     );
   }

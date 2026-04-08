@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
+import type { AdType, AdPosition, Ad } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -8,13 +9,13 @@ export async function GET(req: NextRequest) {
   const activeOnly = searchParams.get("active") === "true";
 
   const where: {
-    type?: string;
-    position?: string;
+    type?: AdType;
+    position?: AdPosition;
     isActive?: boolean;
   } = {};
 
-  if (type && type !== "all") where.type = type;
-  if (position) where.position = position;
+  if (type && type !== "all") where.type = type as AdType;
+  if (position) where.position = position as AdPosition;
   if (activeOnly) where.isActive = true;
 
   const result = await withPrisma(
@@ -48,34 +49,29 @@ export async function POST(req: NextRequest) {
 
   const result = await withPrisma(
     async (prisma) => {
-      try {
-        const ad = await prisma.ad.create({
-          data: {
-            name,
-            type,
-            position,
-            content,
-            imageUrl,
-            linkUrl,
-            isActive: true,
-            startDate: startDate ? new Date(startDate) : null,
-            endDate: endDate ? new Date(endDate) : null,
-            createdBy,
-          },
-        });
+      const ad = await prisma.ad.create({
+        data: {
+          name,
+          type,
+          position,
+          content,
+          imageUrl,
+          linkUrl,
+          isActive: true,
+          startDate: startDate ? new Date(startDate) : null,
+          endDate: endDate ? new Date(endDate) : null,
+          createdBy,
+        },
+      });
 
-        return { success: true, ad };
-      } catch (error) {
-        console.error("Error creating ad:", error);
-        return { success: false, error: "Failed to create ad" };
-      }
+      return { ad: ad as Ad | null };
     },
-    () => ({ success: false, error: "Database unavailable" })
+    () => ({ ad: null as Ad | null })
   );
 
-  if (!result.success) {
+  if (!result.ad) {
     return NextResponse.json(
-      { error: result.error },
+      { error: "Failed to create ad" },
       { status: 500 }
     );
   }

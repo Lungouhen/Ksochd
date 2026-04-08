@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
+import type { Ad } from "@prisma/client";
 
 export async function POST(
   req: NextRequest,
@@ -18,9 +19,9 @@ export async function POST(
         },
       });
 
-      return { ad };
+      return { ad: ad as Ad | null };
     },
-    () => ({ ad: null })
+    () => ({ ad: null as Ad | null })
   );
 
   if (!result.ad) {
