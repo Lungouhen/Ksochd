@@ -40,14 +40,14 @@ export const adminNav: NavItem[] = [
     description: "Org health, KPIs, and pending approvals.",
   },
   {
-    label: "Users",
-    href: "/admin/users",
+    label: "Members",
+    href: "/admin/members",
     description: "RBAC roles, membership lifecycle, and moderation.",
   },
   {
-    label: "Content",
-    href: "/admin/content",
-    description: "Announcements, documents, and gallery assets.",
+    label: "Gallery",
+    href: "/admin/gallery",
+    description: "Gallery management and media assets.",
   },
   {
     label: "Events",
@@ -70,9 +70,9 @@ export const adminNav: NavItem[] = [
     description: "In-depth member, financial, event, and engagement reports.",
   },
   {
-    label: "Approvals",
-    href: "/admin/approvals",
-    description: "Membership approvals and moderation queue.",
+    label: "Notifications",
+    href: "/admin/notifications",
+    description: "Send notifications and manage alerts.",
   },
   {
     label: "Payments",
