@@ -1,4 +1,5 @@
 import { withPrisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -143,12 +144,12 @@ export async function updateModuleConfig(
       const existing = defaultModules.find((m) => m.moduleKey === moduleKey);
       await client.moduleToggle.upsert({
         where: { moduleKey },
-        update: { config, updatedBy },
+        update: { config: config as Prisma.InputJsonValue, updatedBy },
         create: {
           moduleKey,
           displayName: existing?.displayName ?? moduleKey,
           description: existing?.description ?? null,
-          config,
+          config: config as Prisma.InputJsonValue,
           order: existing?.order ?? 99,
           updatedBy,
         },

@@ -1,5 +1,6 @@
 import { withPrisma } from "@/lib/prisma";
 import { getBrandingSettings } from "./branding.service";
+import { Prisma } from "@prisma/client";
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -374,7 +375,7 @@ export async function createTemplate(
           name: input.name,
           type: input.type,
           layout: input.layout,
-          placeholders: input.placeholders ?? null,
+          placeholders: input.placeholders !== undefined ? (input.placeholders as Prisma.InputJsonValue) : Prisma.JsonNull,
           description: input.description ?? null,
           createdBy: input.createdBy,
         },

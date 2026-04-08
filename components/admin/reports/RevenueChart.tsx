@@ -53,8 +53,8 @@ export function RevenueChart({
                 borderRadius: "8px",
               }}
               labelStyle={{ color: "#e2e8f0" }}
-              formatter={(value: number) => [
-                `₹${value.toLocaleString("en-IN")}`,
+              formatter={(value) => [
+                `₹${Number(value).toLocaleString("en-IN")}`,
                 "Revenue",
               ]}
             />
