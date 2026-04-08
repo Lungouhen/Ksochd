@@ -1,5 +1,6 @@
 import { withPrisma } from "@/lib/prisma";
 import type { PageStatus } from "@/types/domain";
+import { Prisma } from "@prisma/client";
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -321,9 +322,9 @@ export async function createSavedReportView(
         data: {
           name: input.name,
           reportType: input.reportType,
-          filters: input.filters,
-          columns: input.columns ?? null,
-          sortConfig: input.sortConfig ?? null,
+          filters: input.filters as Prisma.InputJsonValue,
+          columns: input.columns !== undefined ? (input.columns as Prisma.InputJsonValue) : Prisma.JsonNull,
+          sortConfig: input.sortConfig !== undefined ? (input.sortConfig as Prisma.InputJsonValue) : Prisma.JsonNull,
           exportFormat: input.exportFormat ?? null,
           isShared: input.isShared ?? false,
           createdBy: input.createdBy,
@@ -349,9 +350,22 @@ export async function updateSavedReportView(
 ): Promise<void> {
   await withPrisma(
     async (client) => {
+      const data: Record<string, unknown> = { ...input };
+
+      // Handle JSON fields with proper typing
+      if ('filters' in input && input.filters !== undefined) {
+        data.filters = input.filters as Prisma.InputJsonValue;
+      }
+      if ('columns' in input && input.columns !== undefined) {
+        data.columns = input.columns as Prisma.InputJsonValue;
+      }
+      if ('sortConfig' in input && input.sortConfig !== undefined) {
+        data.sortConfig = input.sortConfig as Prisma.InputJsonValue;
+      }
+
       await client.savedReportView.update({
         where: { id },
-        data: input,
+        data: data as Prisma.SavedReportViewUpdateInput,
       });
     },
     () => undefined,

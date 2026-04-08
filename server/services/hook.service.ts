@@ -1,4 +1,5 @@
 import { withPrisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -111,9 +112,9 @@ export async function createHookRegistration(
           name: input.name,
           description: input.description ?? null,
           handlerType: input.handlerType,
-          handlerConfig: input.handlerConfig,
+          handlerConfig: input.handlerConfig as Prisma.InputJsonValue,
           priority: input.priority ?? 10,
-          conditions: input.conditions ?? null,
+          conditions: input.conditions !== undefined ? (input.conditions as Prisma.InputJsonValue) : Prisma.JsonNull,
           createdBy: input.createdBy,
         },
       });
@@ -139,9 +140,19 @@ export async function updateHookRegistration(
 ): Promise<void> {
   await withPrisma(
     async (client) => {
+      const data: Record<string, unknown> = { ...input };
+
+      // Handle JSON fields with proper typing
+      if ('handlerConfig' in input && input.handlerConfig !== undefined) {
+        data.handlerConfig = input.handlerConfig as Prisma.InputJsonValue;
+      }
+      if ('conditions' in input && input.conditions !== undefined) {
+        data.conditions = input.conditions as Prisma.InputJsonValue;
+      }
+
       await client.hookRegistration.update({
         where: { id },
-        data: input,
+        data: data as Prisma.HookRegistrationUpdateInput,
       });
     },
     () => undefined,

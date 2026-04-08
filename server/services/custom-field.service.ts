@@ -1,5 +1,6 @@
 import { withPrisma } from "@/lib/prisma";
 import type { FieldType } from "@/types/domain";
+import { Prisma } from "@prisma/client";
 
 // ─── Types ──────────────────────────────────────────────────────────────
 
@@ -134,8 +135,8 @@ export async function createCustomField(
           fieldType: input.fieldType,
           placeholder: input.placeholder ?? null,
           defaultValue: input.defaultValue ?? null,
-          options: input.options ?? null,
-          validationRules: input.validationRules ?? null,
+          options: input.options !== undefined ? input.options : Prisma.JsonNull,
+          validationRules: input.validationRules !== undefined ? (input.validationRules as Prisma.InputJsonValue) : Prisma.JsonNull,
           isRequired: input.isRequired ?? false,
           description: input.description ?? null,
           order: nextOrder,
@@ -167,9 +168,16 @@ export async function updateCustomField(
 ): Promise<void> {
   await withPrisma(
     async (client) => {
+      const data: Record<string, unknown> = { ...input };
+
+      // Handle JSON fields with proper typing
+      if ('validationRules' in input && input.validationRules !== undefined) {
+        data.validationRules = input.validationRules as Prisma.InputJsonValue;
+      }
+
       await client.customField.update({
         where: { id },
-        data: input,
+        data: data as Prisma.CustomFieldUpdateInput,
       });
     },
     () => undefined,
