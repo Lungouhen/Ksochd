@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
+import type { MediaType, MediaLibrary } from "@prisma/client";
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const type = searchParams.get("type");
 
-  const where = type && type !== "all" ? { type: type as "IMAGE" | "VIDEO" | "DOCUMENT" | "AUDIO" } : {};
+  const where = type && type !== "all" ? { type: type as MediaType } : {};
 
   const result = await withPrisma(
     async (prisma) => {
@@ -28,31 +29,26 @@ export async function POST(req: NextRequest) {
 
   const result = await withPrisma(
     async (prisma) => {
-      try {
-        const media = await prisma.mediaLibrary.create({
-          data: {
-            filename,
-            url,
-            type,
-            size,
-            alt,
-            caption,
-            uploadedBy,
-          },
-        });
+      const media = await prisma.mediaLibrary.create({
+        data: {
+          filename,
+          url,
+          type,
+          size,
+          alt,
+          caption,
+          uploadedBy,
+        },
+      });
 
-        return { success: true, media };
-      } catch (error) {
-        console.error("Error creating media:", error);
-        return { success: false, error: "Failed to create media" };
-      }
+      return { media: media as MediaLibrary | null };
     },
-    () => ({ success: false, error: "Database unavailable" })
+    () => ({ media: null as MediaLibrary | null })
   );
 
-  if (!result.success) {
+  if (!result.media) {
     return NextResponse.json(
-      { error: result.error },
+      { error: "Failed to create media" },
       { status: 500 }
     );
   }

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export async function GET(
   req: NextRequest,
@@ -20,21 +21,17 @@ export async function GET(
         },
       });
 
-      if (!page) {
-        return { notFound: true, page: null };
-      }
-
-      return { page };
+      return { page, notFound: !page };
     },
-    () => ({ page: null, error: "Database unavailable" })
+    () => ({ page: null, notFound: false })
   );
 
   if (result.notFound) {
     return NextResponse.json({ error: "Page not found" }, { status: 404 });
   }
 
-  if (result.error) {
-    return NextResponse.json({ error: result.error }, { status: 500 });
+  if (!result.page) {
+    return NextResponse.json({ error: "Database unavailable" }, { status: 500 });
   }
 
   return NextResponse.json({ page: result.page });
@@ -50,66 +47,61 @@ export async function PATCH(
 
   const result = await withPrisma(
     async (prisma) => {
-      try {
-        // Update SEO if provided
-        if (seo) {
-          const existingPage = await prisma.page.findUnique({
-            where: { id },
-            select: { seoId: true },
-          });
-
-          if (existingPage?.seoId) {
-            await prisma.sEO.update({
-              where: { id: existingPage.seoId },
-              data: {
-                title: seo.title || title,
-                description: seo.description || excerpt || "",
-                keywords: seo.keywords,
-                ogTitle: seo.ogTitle,
-                ogDescription: seo.ogDescription,
-                ogImage: seo.ogImage,
-                twitterCard: seo.twitterCard,
-                twitterTitle: seo.twitterTitle,
-                twitterDescription: seo.twitterDescription,
-                twitterImage: seo.twitterImage,
-                canonicalUrl: seo.canonicalUrl,
-                noindex: seo.noindex || false,
-                nofollow: seo.nofollow || false,
-                structuredData: seo.structuredData ? JSON.stringify(seo.structuredData) : null,
-              },
-            });
-          }
-        }
-
-        const page = await prisma.page.update({
+      // Update SEO if provided
+      if (seo) {
+        const existingPage = await prisma.page.findUnique({
           where: { id },
-          data: {
-            title,
-            content,
-            excerpt,
-            status,
-            themeId,
-            updatedBy,
-            publishedAt: status === "PUBLISHED" ? new Date() : undefined,
-          },
-          include: {
-            seo: true,
-            theme: true,
-          },
+          select: { seoId: true },
         });
 
-        return { success: true, page };
-      } catch (error) {
-        console.error("Error updating page:", error);
-        return { success: false, error: "Failed to update page" };
+        if (existingPage?.seoId) {
+          await prisma.sEO.update({
+            where: { id: existingPage.seoId },
+            data: {
+              title: seo.title || title,
+              description: seo.description || excerpt || "",
+              keywords: seo.keywords,
+              ogTitle: seo.ogTitle,
+              ogDescription: seo.ogDescription,
+              ogImage: seo.ogImage,
+              twitterCard: seo.twitterCard,
+              twitterTitle: seo.twitterTitle,
+              twitterDescription: seo.twitterDescription,
+              twitterImage: seo.twitterImage,
+              canonicalUrl: seo.canonicalUrl,
+              noindex: seo.noindex || false,
+              nofollow: seo.nofollow || false,
+              structuredData: seo.structuredData ? JSON.stringify(seo.structuredData) : Prisma.JsonNull,
+            },
+          });
+        }
       }
+
+      const page = await prisma.page.update({
+        where: { id },
+        data: {
+          title,
+          content,
+          excerpt,
+          status,
+          themeId,
+          updatedBy,
+          publishedAt: status === "PUBLISHED" ? new Date() : undefined,
+        },
+        include: {
+          seo: true,
+          theme: true,
+        },
+      });
+
+      return { page: page as any };
     },
-    () => ({ success: false, error: "Database unavailable" })
+    () => ({ page: null as any })
   );
 
-  if (!result.success) {
+  if (!result.page) {
     return NextResponse.json(
-      { error: result.error },
+      { error: "Failed to update page" },
       { status: 500 }
     );
   }
@@ -125,37 +117,32 @@ export async function DELETE(
 
   const result = await withPrisma(
     async (prisma) => {
-      try {
-        // Get page with SEO
-        const page = await prisma.page.findUnique({
-          where: { id },
-          select: { seoId: true },
+      // Get page with SEO
+      const page = await prisma.page.findUnique({
+        where: { id },
+        select: { seoId: true },
+      });
+
+      // Delete page (blocks will cascade delete)
+      await prisma.page.delete({
+        where: { id },
+      });
+
+      // Delete associated SEO if exists
+      if (page?.seoId) {
+        await prisma.sEO.delete({
+          where: { id: page.seoId },
         });
-
-        // Delete page (blocks will cascade delete)
-        await prisma.page.delete({
-          where: { id },
-        });
-
-        // Delete associated SEO if exists
-        if (page?.seoId) {
-          await prisma.sEO.delete({
-            where: { id: page.seoId },
-          });
-        }
-
-        return { success: true };
-      } catch (error) {
-        console.error("Error deleting page:", error);
-        return { success: false, error: "Failed to delete page" };
       }
+
+      return { success: true };
     },
-    () => ({ success: false, error: "Database unavailable" })
+    () => ({ success: false })
   );
 
   if (!result.success) {
     return NextResponse.json(
-      { error: result.error },
+      { error: "Failed to delete page" },
       { status: 500 }
     );
   }
