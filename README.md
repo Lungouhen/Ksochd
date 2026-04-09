@@ -49,12 +49,45 @@ npm run lint
 - `lib/auth.ts` reads a base64url JSON token from the `Authorization: Bearer <token>` header or `kso-session` cookie with shape `{ "userId": "user-1", "role": "MEMBER" }`.
 - Services fall back to mock data if Prisma is unreachable, so pages still render without a live database.
 
-## Prisma
+## Database Setup
+
+### Local Development
 ```bash
+# Set your database URL
 export DATABASE_URL="postgresql://postgres:postgres@localhost:5432/ksochd"
-npx prisma generate
-npx prisma migrate dev
+
+# Generate Prisma client
+npm run db:generate
+
+# Push schema to database
+npm run db:push
+
+# Seed database with initial data
+npm run db:seed
 ```
+
+### Production Deployment (Supabase)
+
+See detailed guide: [`docs/DATABASE_SEEDING.md`](docs/DATABASE_SEEDING.md)
+
+**Quick setup:**
+```bash
+# Run migrations and seed database
+npm run db:setup
+```
+
+**Demo Users Created:**
+- Admin: `admin@ksochd.org` (phone: +91-9999999999)
+- Moderator: `moderator@ksochd.org` (phone: +91-9876543211)
+- Member: `member@ksochd.org` (phone: +91-9876543210)
+
+### Available Database Commands
+- `npm run db:generate` — Generate Prisma client
+- `npm run db:push` — Push schema changes to database
+- `npm run db:migrate` — Run migrations (production)
+- `npm run db:seed` — Seed database with initial data
+- `npm run db:setup` — Run migrations + seed (one command for deployment)
+- `npm run db:studio` — Open Prisma Studio
 
 ## Next steps
 - Swap `lib/auth.ts` with Supabase/NextAuth JWT + OTP verification.
@@ -87,4 +120,5 @@ See `docs/MOBILE_TESTING.md` for comprehensive mobile testing checklist.
 - `docs/PWA_ICONS.md` - Guide for creating PWA icons
 - `docs/ANDROID_DEPLOYMENT.md` - Complete Android APK deployment guide
 - `docs/MOBILE_TESTING.md` - Mobile testing checklist and procedures
+- `docs/DATABASE_SEEDING.md` - Database seeding and deployment guide
 
