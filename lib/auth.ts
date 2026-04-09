@@ -1,5 +1,6 @@
 import { cookies, headers } from "next/headers";
 import { Role } from "@/types/domain";
+import { verifyToken } from "./jwt";
 
 export type Session = {
   userId: string;
@@ -8,18 +9,7 @@ export type Session = {
   token?: string;
 };
 
-function decodeToken(raw?: string): Partial<Session> {
-  if (!raw) return {};
-  try {
-    const json = Buffer.from(raw, "base64url").toString("utf8");
-    const parsed = JSON.parse(json) as Partial<Session>;
-    return parsed;
-  } catch {
-    return {};
-  }
-}
-
-export async function getSession(): Promise<Session> {
+export async function getSession(): Promise<Session | null> {
   const hdrs = await headers();
   const authHeader = hdrs.get("authorization");
   const bearer =
@@ -29,14 +19,24 @@ export async function getSession(): Promise<Session> {
   const cookieStore = await cookies();
   const cookieToken = cookieStore.get("kso-session")?.value;
   const rawToken = bearer ?? cookieToken;
-  const decoded = decodeToken(rawToken);
+
+  if (!rawToken) {
+    return null;
+  }
+
+  const decoded = await verifyToken(rawToken);
+
+  if (!decoded) {
+    return null;
+  }
 
   return {
-    userId: decoded.userId ?? "user-1",
+    userId: decoded.userId,
     name: decoded.name,
-    role: decoded.role ?? Role.MEMBER,
-    token: rawToken ?? decoded.token,
+    role: decoded.role,
+    token: rawToken,
   };
 }
 
 export const verifySession = getSession;
+

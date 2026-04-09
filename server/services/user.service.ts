@@ -41,6 +41,10 @@ function mapToProfile(user: {
 export async function getCurrentUser(): Promise<MemberProfile> {
   const session = await getSession();
 
+  if (!session) {
+    throw new Error("Not authenticated");
+  }
+
   return withPrisma(
     async (client) => {
       const user = await client.user.findUnique({

@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   const session = await getSession();
 
   // Only admins can view audit logs
-  if (session.role !== Role.ADMIN) {
+  if (!session || session.role !== Role.ADMIN) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
