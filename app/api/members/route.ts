@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withPrisma } from "@/lib/prisma";
-import { Status } from "@/types/domain";
+import { Status, Role } from "@/types/domain";
 import { getSession } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   const session = await getSession();
+
+  // Only admins can approve/reject members
+  if (!session || session.role !== Role.ADMIN) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+
   const body = await request.json();
   const { memberId, action } = body as { memberId: string; action: "approve" | "reject" };
 
@@ -39,7 +45,7 @@ export async function POST(request: NextRequest) {
           action: action === "approve" ? "MEMBER_APPROVED" : "MEMBER_REJECTED",
           targetUserId: memberId,
           targetUserName: user.name,
-          performedBy: session.userId || "unknown",
+          performedBy: session.userId,
           performedByName: session.name || "Unknown Admin",
           details: {
             newStatus,
